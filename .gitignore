@@ -1,2 +1,5 @@
 *.idea
 *config*
+*__pycache__*
+*.pyc
+/venv
