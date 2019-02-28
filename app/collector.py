@@ -39,22 +39,3 @@ class ClashAPI:
     def get_clan_info_from_tag(self, clan_tag, params=None):
         self.create_url(clashurl.CLAN_URL, path=clan_tag)
         return self.get_api_data(params=params)
-
-
-
-
-
-
-
-
-def add(a,b):
-    return a+b
-
-
-def multiple(a, c):
-    return a*b
-
-
-def add_then_multiply(a,b, c)
-    # val1 = add(a,b)
-    return multiple(val1, c)
