@@ -3,7 +3,10 @@ import json
 import datetime
 import app.config as config
 import app.lib.urls as clashurl
-import urllib
+try:
+    from urllib import quote
+except ImportError:
+    from urllib.parse import quote
 
 
 class ClashAPI:
@@ -14,7 +17,7 @@ class ClashAPI:
         path_value = kwargs.get('path')
         if path_value:
             print(raw_url, path_value)
-            encoded_path = urllib.quote_plus(path_value)
+            encoded_path = quote(path_value)
             self.url = raw_url.format(path=encoded_path)
         else:
             self.url = raw_url
@@ -22,7 +25,7 @@ class ClashAPI:
     def get_api_data(self, params=None):
         headers = {'Authorization': 'Bearer ' + config.DEV_ADMIN_API_KEY}
         response = requests.get(
-            url= self.url,
+            url=self.url,
             headers=headers,
             params=params)
         # print("Currently GETing:" + response.url)
