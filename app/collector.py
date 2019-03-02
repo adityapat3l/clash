@@ -1,44 +1,117 @@
-import requests
-import json
-import datetime
-import app.config as config
-import app.lib.urls as clashurl
-try:
-    from urllib import quote
-except ImportError:
-    from urllib.parse import quote
+from __future__ import print_function
+from app.api import ClashAPI
+from pprint import pprint
+# pprint(ClashAPI().get_player_info_from_tag('#8292J8QV8'))
+
+# clan_data = pprint(ClashAPI().get_clan_info_from_tag('#YUPCJJCR'))
 
 
-class ClashAPI:
-    def __init__(self):
-        self.url = None
+class PlayerData:
+    def __init__(self, tag):
+        # super().__init__()
+        self.tag = tag
+        self.name = None
+        self.townHallLevel = None
+        self.attackWins = None
+        self.defenseWins = None
+        self.bestTrophies = None
+        self.donationsGiven = None
+        self.donationsReceived = None
+        self.expLevel = None
+        self.kingLevel = None
+        self.queenLevel = None
+        self.wardenLevel = None
+        self.battleMachineLevel = None
+        self.warStars = None
 
-    def create_url(self, raw_url, **kwargs):
-        path_value = kwargs.get('path')
-        if path_value:
-            print(raw_url, path_value)
-            encoded_path = quote(path_value)
-            self.url = raw_url.format(path=encoded_path)
-        else:
-            self.url = raw_url
+    def parse_hero_info(self, heroList):
 
-    def get_api_data(self, params=None):
-        headers = {'Authorization': 'Bearer ' + config.DEV_ADMIN_API_KEY}
-        response = requests.get(
-            url=self.url,
-            headers=headers,
-            params=params)
-        # print("Currently GETing:" + response.url)
-        if response.status_code == 200:
-            data = json.loads(response.content.decode('utf-8'))
-            return data
-        else:
-            raise ValueError('Clash API GET call failed with status code: ' + str(response.status_code))
+        for hero in heroList:
+            self.kingLevel = hero.get('level') if hero['name'] == 'Barbarian King' else None
+            self.battleMachineLevel = hero.get('level') if hero['name'] == 'Battle Machine' else None
+            self.queenLevel = hero.get('level') if hero['name'] == 'Archer Queen' else None
+            self.wardenLevel = hero.get('level') if hero['name'] == 'Grand Warden' else None
 
-    def get_player_info_from_tag(self, player_tag, params=None):
-        self.create_url(clashurl.PLAYER_URL, path=player_tag)
-        return self.get_api_data(params=params)
+    def get_player_info(self):
+        player_info = ClashAPI().get_player_info_from_tag(self.tag)
+        self.townHallLevel = player_info.get('townHallLevel')
+        self.name = player_info.get('name')
+        # self.kingLevel = player_info.get('heroes').get('level')
+        self.parse_hero_info(player_info.get('heroes'))
 
-    def get_clan_info_from_tag(self, clan_tag, params=None):
-        self.create_url(clashurl.CLAN_URL, path=clan_tag)
-        return self.get_api_data(params=params)
+        # print(self.name, self.townHallLevel)
+
+        return player_info
+
+        # print(player_info.keys())
+
+
+
+
+
+
+class ClanData:
+    def __init__(self, tag):
+        # super().__init__()
+        self.tag = tag
+        self.clanLevel = None
+        self.clanPoints = None
+        self.isWarLogPublic = None
+        self.warWins = None
+        self.warLosses = None
+        self.warTies = None
+        self.memberList = []
+        self.numMembers = None
+
+    def get_player_detail_list(self, player_list):
+        self.numMembers = len(player_list)
+
+        player_dict = {}
+        for member in player_list:
+            player_tag = member.get('tag', None)
+            player_dict['tag'] = player_tag
+            # print(player_tag)
+
+            player_inst = PlayerData(player_tag)
+            player_dict['object'] = player_inst
+            self.memberList.append(player_inst.get_player_info())  # TODO: FIX THIS SHIT - SAVE INSTANCES NOT DICT
+
+            # print(self.memberList)
+            # print("\n\n\n")
+
+
+    def get_all_clan_info(self):
+        allClanData = ClashAPI().get_clan_info_from_tag(self.tag)
+
+        self.clanLevel = allClanData.get('clanLevel', None)
+        self.clanPoints = allClanData.get('clanPoints', None)
+        self.isWarLogPublic = allClanData.get('isWarLogPublic', None)
+        partialMemberList = allClanData.get('memberList', None)
+
+        if self.isWarLogPublic:
+            pass  # TODO: clanWins, clanLosses
+
+        self.get_player_detail_list(partialMemberList)
+
+        # print(self.memberList)
+
+    def get_townhall_counts(self):
+
+        townHallDict = {}
+
+        for player_dict in self.memberList:
+
+            if player_dict['townHallLevel'] in townHallDict.keys():
+                townHallDict[player_dict['townHallLevel']] += 1
+            else:
+                townHallDict[player_dict['townHallLevel']] = 1
+
+        pprint(townHallDict)
+
+
+
+
+
+
+
+

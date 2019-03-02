@@ -1,8 +1,25 @@
-from app.collector import ClashAPI
+from app.api import ClashAPI
+from pprint import pprint
+from app.collector import ClanData, PlayerData
+import argparse
 
-# print(ClashAPI.get_api_data('https://api.clashofclans.com/v1/players/%238292J8QV8'))
+
+parser = argparse.ArgumentParser(description="Enter Clan Info!")
+parser.add_argument("-c", "--clan", help="Your nobel profession")
+parser.add_argument("-p", "--player", help="Your nobel profession")
+args = parser.parse_args()
+
+clan_tag = args.clan.lower() if args.clan else None
+player_tag = args.player if args.player else None
+
+if clan_tag == 'fy':
+    clan_tag = '#YUPCJJCR'
+elif clan_tag == 'en':
+    clan_tag = '#CUQLRJOG'
 
 
-# print(ClashAPI().get_player_info_from_tag('#8292J8QV8'))
+clan = ClanData(clan_tag)
 
-print(ClashAPI().get_clan_info_from_tag('#YUPCJJCR'))
+clan.get_all_clan_info()
+clan.get_townhall_counts()
+# pprint(PlayerData().get_player_info('#VVV8V9QC'))
