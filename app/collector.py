@@ -1,11 +1,10 @@
-from __future__ import print_function
+from __future__ import print_function, division
 from app.api import ClashAPI
 from pprint import pprint
 
 
 class PlayerData:
     def __init__(self, tag):
-        # super().__init__()
         self.tag = tag
         self.name = None
         self.townHallLevel = None
@@ -76,7 +75,8 @@ class ClanData:
         partialMemberList = allClanData.get('memberList', None)
 
         if self.isWarLogPublic:
-            pass  # TODO: clanWins, clanLosses
+            self.warWins = allClanData.get('warWins', None)
+            self.warLosses = allClanData.get('warLosses', None)
 
         self.get_player_detail_list(partialMemberList)
 
@@ -103,9 +103,33 @@ class ClanData:
         pprint(townHallDict)
 
 
+    def get_avg_hero_level_by_th(self, active_only=False, hero=None):
 
+        levelByTHSum = {}
+        levelByTHCounts = {}
 
+        def add_th():
+            if player.townHallLevel in levelByTHSum.keys():
+                levelByTHSum[player.townHallLevel] += player.queenLevel
+                levelByTHCounts[player.townHallLevel] += 1
+            else:
+                levelByTHSum[player.townHallLevel] = player.queenLevel
+                levelByTHCounts[player.townHallLevel] = 1
 
+        for player in self.memberDict.values():
 
+            player.get_player_info()
 
+            if active_only:
+                if player.donationsReceived + player.donationsGiven > 10:
+                    if player.queenLevel:
+                        add_th()
+            else:
+                if player.queenLevel:
+                    add_th()
+
+        levelByTHMean = {k: v/levelByTHCounts[k] for k, v in levelByTHSum.items()}
+        # pprint(levelByTHSum)
+        pprint(levelByTHCounts)
+        pprint(levelByTHMean)
 
