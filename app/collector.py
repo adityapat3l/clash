@@ -102,34 +102,47 @@ class ClanData:
 
         pprint(townHallDict)
 
-
-    def get_avg_hero_level_by_th(self, active_only=False, hero=None):
+    def get_avg_hero_level_by_th(self, heroName, isActive=False):
 
         levelByTHSum = {}
         levelByTHCounts = {}
 
-        def add_th():
+        if not heroName:
+            raise ValueError('Please Provide the Name of a Hero: King, Queen, Warden, Battlemachine')
+        else:
+            heroName = heroName.lower()
+
+        def sum_hero_levels(heroLevel):
+
             if player.townHallLevel in levelByTHSum.keys():
-                levelByTHSum[player.townHallLevel] += player.queenLevel
+                levelByTHSum[player.townHallLevel] += heroLevel
                 levelByTHCounts[player.townHallLevel] += 1
             else:
-                levelByTHSum[player.townHallLevel] = player.queenLevel
+                levelByTHSum[player.townHallLevel] = heroLevel
                 levelByTHCounts[player.townHallLevel] = 1
 
         for player in self.memberDict.values():
 
             player.get_player_info()
 
-            if active_only:
+            heroDict = {
+                'king': player.kingLevel,
+                'queen': player.queenLevel,
+                'warden': player.wardenLevel,
+                'battlemachine': player.battleMachineLevel
+            }
+
+            heroLevel = heroDict[heroName]
+
+            if isActive:
                 if player.donationsReceived + player.donationsGiven > 10:
-                    if player.queenLevel:
-                        add_th()
+                    if heroLevel:
+                        sum_hero_levels(heroLevel)
             else:
-                if player.queenLevel:
-                    add_th()
+                if heroLevel:
+                    sum_hero_levels(heroLevel)
 
-        levelByTHMean = {k: v/levelByTHCounts[k] for k, v in levelByTHSum.items()}
+        avgHeroLevelbyTH = {k: v/levelByTHCounts[k] for k, v in levelByTHSum.items()}
         # pprint(levelByTHSum)
-        pprint(levelByTHCounts)
-        pprint(levelByTHMean)
-
+        print('TH Counts: ', levelByTHCounts)
+        print('Levels: ', avgHeroLevelbyTH)

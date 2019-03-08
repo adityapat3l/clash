@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<body>
+<h1>Add Clan Name</h1>
+<form method="POST" action="/">
+    <input type="number" name="title">
+    <input type="submit" value="Add">
+</form>
+
+<h1>Members</h1>
+<table>
+    {% for member in clans %}
+    <tr>
+        <td>
+            {{member.clan_id}}
+        </td>
+        <td>
+            <form method="POST" action="./update" style="display: inline">
+                <input type="hidden" value="{{member.clan_id}}" name="oldtitle">
+                <input type="text" value="{{member.clan_id}}" name="newtitle">
+                <input type="submit" value="Update">
+            </form>
+        </td>
+        <td>
+            <form method="POST" action="./delete" style="display: inline">
+                <input type="hidden" value="{{member.clan_id}}" name="title">
+                <input type="submit" value="Delete">
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+</body>
+</html>

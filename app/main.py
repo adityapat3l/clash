@@ -7,28 +7,35 @@ import argparse
 parser = argparse.ArgumentParser(description="Enter Clan Info!")
 parser.add_argument("-c", "--clan", help="Enter the clan tag with the #")
 parser.add_argument("-p", "--player", help="Enter the player tag with the $+#")
-parser.add_argument('-ao', "--active_only", help="Int - Only consider active players?", type=bool, default=False)
+parser.add_argument("--hero", help="Enter the hero name")
+parser.add_argument("--active_only", help="Int - Only consider active players?", type=bool, default=False)
 args = parser.parse_args()
 
-clan_tag = args.clan.lower() if args.clan else None
-player_tag = args.player if args.player else None
-active_level = bool(int(args.active_only) if args.active_only else None)
+clanTag = args.clan.lower() if args.clan else None
+playerTag = args.player if args.player else None
+heroName = args.hero if args.hero else None
+isActive = bool(int(args.active_only) if args.active_only else False)
 
-if clan_tag == 'foraiur':
-    clan_tag = '#YUPCJJCR'
-elif clan_tag == 'forever-young':
-    clan_tag = '#CUQLRJOG'
-elif clan_tag == 'mincers':
-    clan_tag = '#9G2VRYUJ'
-elif clan_tag == 'elchavo':
-    clan_tag = '#2UPC98G'
-elif clan_tag == 'angrytigers':
-    clan_tag = '#YJQGP2VG'
-elif clan_tag == 'hamham':
-    clan_tag = '#GVJ9Q9J8'
-clan = ClanData(clan_tag)
+if clanTag == 'foraiur':
+    clanTag = '#YUPCJJCR'
+elif clanTag == 'forever-young':
+    clanTag = '#CUQLRJOG'
+elif clanTag == 'mincers':
+    clanTag = '#9G2VRYUJ'
+elif clanTag == 'elchavo':
+    clanTag = '#2UPC98G'
+elif clanTag == 'angrytigers':
+    clanTag = '#YJQGP2VG'
+elif clanTag == 'hamham':
+    clanTag = '#GVJ9Q9J8'
+elif clanTag == 'lightinghero':
+    clanTag = '#89RJ2U0J'
+elif clanTag == 'shankscrew':
+    clanTag = '#YPCRU92'
+clan = ClanData(clanTag)
+
 
 clan.get_all_clan_info()
 # clan.get_townhall_counts(active_only=True)
-clan.get_avg_hero_level_by_th(active_only=active_level)
+clan.get_avg_hero_level_by_th(heroName, isActive=isActive)
 # pprint(PlayerData('#VVV8V9QC').get_player_info())
