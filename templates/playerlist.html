@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h1>Member Details</h1>
+<table>
+    {% for member in members %}
+    <th>Player Name</th>
+    <th>PLayer Level</th>
+    <th>Queen Level</th>
+    <tr>
+        <td>
+            {{member.clanName}}
+        </td>
+        <td>
+            {{member.clanLevel}}
+        </td>
+        <td>
+            {{member.avgQueenLevel}}
+        </td>
+        <td>
+            <form method="POST" action="./member" style="display: inline">
+                <input type="hidden" value="{{clan.clanTag}}" name="oldtitle">
+                <input type="text" value="{{clan.clanTag}}" name="newtitle">
+                <input type="submit" value="Update">
+            </form>
+        </td>
+        <td>
+            <form method="POST" action="./delete" style="display: inline">
+                <input type="hidden" value="{{clan.clanTag}}" name="title">
+                <input type="submit" value="Delete">
+            </form>
+        </td>
+    </tr>
+    <tr> {{clans.members}} </tr>
+    {% endfor %}
+</table>
+
+
+</body>
+</html>

@@ -19,6 +19,7 @@ class PlayerData:
         self.wardenLevel = None
         self.battleMachineLevel = None
         self.warStars = None
+        # self.get_player_info()
 
     def parse_hero_info(self, heroList):
 
@@ -50,6 +51,7 @@ class PlayerData:
 class ClanData:
     def __init__(self, tag):
         self.tag = tag
+        self.clanName = None
         self.clanLevel = None
         self.clanPoints = None
         self.isWarLogPublic = None
@@ -57,18 +59,21 @@ class ClanData:
         self.warLosses = None
         self.warTies = None
         self.memberDict = {}
-        self.numMembers = None
+        self.memberCount = None
 
-    def get_player_detail_list(self, player_list):
-        self.numMembers = len(player_list)
+    def get_player_detail_dict(self, player_list):
+        self.memberCount = len(player_list)
 
         for member in player_list:
             player_tag = member.get('tag', None)
             self.memberDict[player_tag] = PlayerData(player_tag)
 
+        # return self.memberDict
+
     def get_all_clan_info(self):
         allClanData = ClashAPI().get_clan_info_from_tag(self.tag)
 
+        self.clanName = allClanData.get('name', None)
         self.clanLevel = allClanData.get('clanLevel', None)
         self.clanPoints = allClanData.get('clanPoints', None)
         self.isWarLogPublic = allClanData.get('isWarLogPublic', None)
@@ -78,7 +83,7 @@ class ClanData:
             self.warWins = allClanData.get('warWins', None)
             self.warLosses = allClanData.get('warLosses', None)
 
-        self.get_player_detail_list(partialMemberList)
+        self.get_player_detail_dict(partialMemberList)
 
     def get_townhall_counts(self, active_only=False):
 
@@ -95,7 +100,7 @@ class ClanData:
             player.get_player_info()
 
             if active_only:
-                if player.donationsReceived + player.donationsGiven > 10:
+                if player.donationsReceived + player.donationsGiven > 0:
                     add_th()
             else:
                 add_th()
@@ -144,5 +149,6 @@ class ClanData:
 
         avgHeroLevelbyTH = {k: v/levelByTHCounts[k] for k, v in levelByTHSum.items()}
         # pprint(levelByTHSum)
-        print('TH Counts: ', levelByTHCounts)
-        print('Levels: ', avgHeroLevelbyTH)
+        return avgHeroLevelbyTH
+        # 'TH Counts: ', levelByTHCounts)
+        # print('Levels: ', avgHeroLevelbyTH)
