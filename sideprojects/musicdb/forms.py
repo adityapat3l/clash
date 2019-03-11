@@ -1,3 +1,5 @@
+#http://www.blog.pythonlibrary.org/2017/12/13/flask-101-how-to-add-a-search-form/
+
 from wtforms import Form, StringField, SelectField
 
 class MusicSearchForm(Form):
@@ -6,3 +8,14 @@ class MusicSearchForm(Form):
                ('Publisher', 'Publisher')]
     select = SelectField('Search for music:', choices=choices)
     search = StringField('')
+
+class AlbumForm(Form):
+    media_types = [('Digital', 'Digital'),
+                   ('CD', 'CD'),
+                   ('Cassette Tape', 'Cassette Tape')
+                   ]
+    artist = StringField('Artist')
+    title = StringField('Title')
+    release_date = StringField('Release Date')
+    publisher = StringField('Publisher')
+    media_type = SelectField('Media', choices=media_types)
