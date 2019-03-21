@@ -1,6 +1,6 @@
 import requests
 import json
-import app.config as config
+import config
 import app.lib.urls as clashurl
 try:
     from urllib import quote  # Python2
