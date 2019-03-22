@@ -39,3 +39,6 @@ clan.populate_clan_info()
 # clan.get_townhall_counts(active_only=True)
 print(clan.get_avg_hero_level_by_th(heroName, isActive=isActive))
 # pprint(PlayerData('#VVV8V9QC').get_player_info())
+
+# Adi - #8292j8qv8
+# Swede - #Y02qgvr2

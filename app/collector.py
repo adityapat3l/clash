@@ -20,6 +20,7 @@ class PlayerData:
         self.warden_level = None
         self.battle_machine_Level = None
         self.war_stars = None
+        self.clan_tag = None
         self.get_player_info()
 
     def parse_hero_info(self, heroList):
@@ -44,6 +45,8 @@ class PlayerData:
         self.attack_wins = player_info.get('attackWins')
         self.defense_wins = player_info.get('defenseWins')
         self.current_trophies = player_info.get('trophies')
+        self.exp_level = player_info.get('expLevel')
+        self.clan_tag = player_info.get('clan').get('tag')
 
         self.parse_hero_info(player_info.get('heroes'))
 
@@ -51,7 +54,7 @@ class PlayerData:
 
 class ClanData:
     def __init__(self, tag):
-        self.tag = tag
+        self.clan_tag = tag
         self.clan_name = None
         self.clan_level = None
         self.clan_points = None
@@ -74,7 +77,7 @@ class ClanData:
         # return self.memberDict
 
     def populate_clan_info(self):
-        allClanData = ClashAPI().get_clan_info_from_tag(self.tag)
+        allClanData = ClashAPI().get_clan_info_from_tag(self.clan_tag)
 
         self.clan_name = allClanData.get('name', None)
         self.clan_level = allClanData.get('clanLevel', None)
