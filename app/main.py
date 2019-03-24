@@ -19,7 +19,7 @@ isActive = bool(int(args.active_only) if args.active_only else False)
 if clanTag == 'foraiur':
     clanTag = '#YUPCJJCR'
 elif clanTag == 'forever-young':
-    clanTag = '#CUQLRJOG'
+    clanTag = '#CUQLRJ0G'
 elif clanTag == 'mincers':
     clanTag = '#9G2VRYUJ'
 elif clanTag == 'elchavo':

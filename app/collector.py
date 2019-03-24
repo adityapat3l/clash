@@ -8,6 +8,7 @@ class PlayerData:
         self.player_tag = tag
         self.player_name = None
         self.town_hall_level = None
+        self.league_name = None
         self.current_trophies = None
         self.attack_wins = None
         self.defense_wins = None
@@ -47,6 +48,7 @@ class PlayerData:
         self.current_trophies = player_info.get('trophies')
         self.exp_level = player_info.get('expLevel')
         self.clan_tag = player_info.get('clan').get('tag')
+        self.league_name = player_info.get('league', {}).get('name')
 
         self.parse_hero_info(player_info.get('heroes'))
 
@@ -63,6 +65,7 @@ class ClanData:
         self.war_losses = None
         self.war_ties = None
         self.members_dict = {}
+        self.member_list_raw = None
         self.member_count = None
 
         self.populate_clan_info()
@@ -83,9 +86,9 @@ class ClanData:
         self.clan_level = allClanData.get('clanLevel', None)
         self.clan_points = allClanData.get('clanPoints', None)
         self.invite_only = allClanData.get('isWarLogPublic', None)
-        member_list = allClanData.get('memberList', None)
+        self.member_list_raw = allClanData.get('memberList', None)
 
-        self.member_count = len(member_list)
+        self.member_count = len(self.member_list_raw)
 
         if self.invite_only:
             self.war_wins = allClanData.get('warWins', None)

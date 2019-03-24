@@ -9,6 +9,11 @@ database_file = "sqlite:///{}".format(os.path.join(project_dir, "db/clashdatabas
 
 flaskapp = Flask(__name__)
 flaskapp.config["SQLALCHEMY_DATABASE_URI"] = config.MYSQL_URL
-flaskapp.config['SQLALCHEMY_ECHO'] = True
+flaskapp.config['SQLALCHEMY_ECHO'] = False
+flaskapp.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(flaskapp)
+
+# db_session = scoped_session(sessionmaker(autocommit=False,
+#                                          autoflush=False,
+#                                          bind=engine))

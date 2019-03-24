@@ -2,6 +2,7 @@ from clashmanager import db
 from app.compute import clan as clan_math
 from datetime import datetime
 from app.collector import PlayerData
+import app.models.clan_model as clan_model
 
 
 class PlayerStatsCurrent(db.Model):
@@ -29,35 +30,43 @@ class PlayerStatsCurrent(db.Model):
     created_time = db.Column(db.DateTime, default=datetime.utcnow)
     updated_time = db.Column(db.DateTime, default=datetime.utcnow)
 
-    @classmethod
-    def create_from_player_tag(cls, player_tag):
-        _player = PlayerData(player_tag)
+    @staticmethod
+    def get_or_create_clan(clan_tag):
 
-        # _clan_tag = _player.clan_tag
-        #
-        # if _clan_tag:
-        #     clan = PlayerStatsCurrent.query.filter_by(clan_tag=_clan_tag).first()
-        #     if not clan:
-        #         clan = ClanStatsCurrent.create_from_tag(_clan_tag)
-        # else:
-        #     return TypeError("Sorry this player is Clanless")
+        if clan_tag:
+            clan = PlayerStatsCurrent.query.filter_by(clan_tag=clan_tag).first()
+            if not clan:
+                clan = clan_model.ClanStatsCurrent.create_from_tag(clan_tag)
+
+            return clan
+
+    @classmethod
+    def create_from_player_tag(cls, player_tag, player_obj=None, skip_clan_create=False):
+        if not player_obj:
+            player_obj = PlayerData(player_tag)
+
+        _clan_tag = player_obj.clan_tag
+
+        if not skip_clan_create:
+            PlayerStatsCurrent.get_or_create_clan(_clan_tag)
 
         player_entry = PlayerStatsCurrent(
-                                        player_tag=_player.player_tag,
-                                        player_name=_player.player_name,
-                                        exp_level=_player.exp_level,
-                                        current_trophies=_player.current_trophies,
-                                        attack_wins=_player.attack_wins,
-                                        defense_wins=_player.defense_wins,
-                                        donations_given=_player.donations_given,
-                                        donations_received=_player.donations_received,
-                                        war_stars=_player.war_stars,
-                                        town_hall_level=_player.town_hall_level,
-                                        king_level=_player.king_level,
-                                        queen_level=_player.queen_level,
-                                        warden_level=_player.warden_level,
-                                        battle_machine_Level=_player.battle_machine_Level,
-                                        clan_tag=_player.clan_tag
+                                        player_tag=player_obj.player_tag,
+                                        player_name=player_obj.player_name,
+                                        exp_level=player_obj.exp_level,
+                                        current_league=player_obj.league_name,
+                                        current_trophies=player_obj.current_trophies,
+                                        attack_wins=player_obj.attack_wins,
+                                        defense_wins=player_obj.defense_wins,
+                                        donations_given=player_obj.donations_given,
+                                        donations_received=player_obj.donations_received,
+                                        war_stars=player_obj.war_stars,
+                                        town_hall_level=player_obj.town_hall_level,
+                                        king_level=player_obj.king_level,
+                                        queen_level=player_obj.queen_level,
+                                        warden_level=player_obj.warden_level,
+                                        battle_machine_Level=player_obj.battle_machine_Level,
+                                        clan_tag=player_obj.clan_tag
                                        )
 
         db.session.add(player_entry)
@@ -65,5 +74,5 @@ class PlayerStatsCurrent(db.Model):
         return player_entry
 
 
-class HistoricPlayerStats(db.Model):
-    pass
+# class HistoricPlayerStats(db.Model):
+#     pass

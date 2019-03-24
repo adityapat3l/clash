@@ -5,9 +5,11 @@ from app.collector import ClanData, ClashAPI
 from app.models.player_model import PlayerStatsCurrent
 from sqlalchemy.ext.associationproxy import association_proxy
 
+
 def _member_find_or_create(player_tag):
     member = PlayerStatsCurrent.query.filter_by(player_tag=player_tag).first()
     return member or PlayerStatsCurrent.create_from_player_tag(player_tag=player_tag)
+
 
 class ClanStatsCurrent(db.Model):
 
@@ -24,22 +26,23 @@ class ClanStatsCurrent(db.Model):
     created_time = db.Column(db.DateTime, default=datetime.utcnow)
     updated_time = db.Column(db.DateTime, default=datetime.utcnow)
 
-    clan_members = db.relationship('PlayerStatsCurrent', backref=db.backref('current_clan', lazy='dynamic'))
+    clan_members = db.relationship('PlayerStatsCurrent', backref=db.backref('current_clan', lazy=True))
 
     members = association_proxy('clan_members', 'player_tag',
                                 creator=_member_find_or_create,
                                 )
 
     @classmethod
-    def create_from_tag(cls, clan_tag):
-        _clan = ClanData(clan_tag)
-        clan_entry = ClanStatsCurrent(clan_tag=_clan.clan_tag,
-                                      clan_name=_clan.clan_name,
-                                      clan_level=_clan.clan_level,
-                                      clan_points=_clan.clan_points,
-                                      member_count=_clan.member_count,
-                                      invite_only=_clan.invite_only,
-                                      war_wins=_clan.war_wins
+    def create_from_tag(cls, clan_tag, clan_obj=None):
+        if not clan_obj:
+            clan_obj = ClanData(clan_tag)
+        clan_entry = ClanStatsCurrent(clan_tag=clan_obj.clan_tag,
+                                      clan_name=clan_obj.clan_name,
+                                      clan_level=clan_obj.clan_level,
+                                      clan_points=clan_obj.clan_points,
+                                      member_count=clan_obj.member_count,
+                                      invite_only=clan_obj.invite_only,
+                                      war_wins=clan_obj.war_wins
                                       )
 
         db.session.add(clan_entry)
@@ -66,5 +69,5 @@ class ClanStatsCurrent(db.Model):
         pass
 
 
-class HistoricClanStats(db.Model):
-    pass
+# class HistoricClanStats(db.Model):
+#     pass

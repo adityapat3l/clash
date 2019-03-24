@@ -1,1 +1,2 @@
-from . import clan_model,  player_model
+from .clan_model import ClanStatsCurrent
+from .player_model import PlayerStatsCurrent
