@@ -1,9 +1,9 @@
 import app.feeder as feeder
 import config
 from clashmanager import db
-import app.models
 
 def initialize():
+    db.drop_all()
     db.create_all()
 
     for clan_tag in config.STARTING_CLAN_TAG_LIST:

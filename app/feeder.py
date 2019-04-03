@@ -12,8 +12,8 @@ def populate_clan_details(clan_tag):
 
     existing_clan = ClanStatsCurrent.query.filter_by(clan_tag=clan_tag).first()
     if existing_clan:
-        name = existing_clan.clan_tag
-        print("Sorry, clan {name} has already been created".format(name=name))
+        name = existing_clan.clan_name
+        print("Sorry, clan '{name}' has already been created".format(name=name))
         return existing_clan
 
     clan = ClanData(clan_tag)
