@@ -36,6 +36,7 @@ class ClanStatsCurrent(db.Model):
     war_losses = db.Column(db.Integer)
     created_time = db.Column(db.DateTime, default=datetime.utcnow)
     updated_time = db.Column(db.DateTime, default=datetime.utcnow)
+    archived_time = db.Column(db.DateTime)
 
     clan_members = db.relationship('PlayerStatsCurrent', backref=db.backref('current_clan', lazy=True))
 
