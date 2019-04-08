@@ -115,7 +115,5 @@ class ClanStatsCurrent(db.Model):
         return data
 
 # class HistoricClanStats(db.Model):
-#     pass
+# pass
 
-
-# db.session.query(models.PlayerStatsCurrent.town_hall_level, func.count(models.PlayerStatsCurrent.town_hall_level)).group_by(models.PlayerStatsCurrent.town_hall_level).all()

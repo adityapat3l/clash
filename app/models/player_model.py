@@ -3,7 +3,17 @@ from app.compute import clan as clan_math
 from datetime import datetime
 from app.collector import PlayerData
 import app.models.clan_model as clan_model
+from sqlalchemy import PrimaryKeyConstraint
 
+
+def get_or_create_clan(clan_tag):
+
+    if clan_tag:
+        clan = PlayerStatsCurrent.query.filter_by(clan_tag=clan_tag).first()
+        if not clan:
+            clan = clan_model.ClanStatsCurrent.create_from_tag(clan_tag)
+
+        return clan
 
 class PlayerStatsCurrent(db.Model):
 
@@ -23,22 +33,14 @@ class PlayerStatsCurrent(db.Model):
     queen_level = db.Column(db.Integer)
     warden_level = db.Column(db.Integer)
     battle_machine_Level = db.Column(db.Integer)
+    achv_th_destroyed = db.Column(db.Integer)
+    achv_total_donations = db.Column(db.Integer)
 
-    clan_tag = db.Column(db.String(20), db.ForeignKey("clan_stats_current.clan_tag"))
+    clan_tag = db.Column(db.String(20), db.ForeignKey("clan_stats_current.clan_tag"), index=True)
     # clan = db.relationship('ClanStatsCurrent', backref=db.backref('members', lazy=True))
 
     created_time = db.Column(db.DateTime, default=datetime.utcnow)
     updated_time = db.Column(db.DateTime, default=datetime.utcnow)
-
-    @staticmethod
-    def get_or_create_clan(clan_tag):
-
-        if clan_tag:
-            clan = PlayerStatsCurrent.query.filter_by(clan_tag=clan_tag).first()
-            if not clan:
-                clan = clan_model.ClanStatsCurrent.create_from_tag(clan_tag)
-
-            return clan
 
     @classmethod
     def create_from_player_tag(cls, player_tag, player_obj=None, skip_clan_create=False):
@@ -48,7 +50,7 @@ class PlayerStatsCurrent(db.Model):
         _clan_tag = player_obj.clan_tag
 
         if not skip_clan_create:
-            PlayerStatsCurrent.get_or_create_clan(_clan_tag)
+            get_or_create_clan(_clan_tag)
 
         player_entry = PlayerStatsCurrent(
                                         player_tag=player_obj.player_tag,
@@ -66,7 +68,9 @@ class PlayerStatsCurrent(db.Model):
                                         queen_level=player_obj.queen_level,
                                         warden_level=player_obj.warden_level,
                                         battle_machine_Level=player_obj.battle_machine_Level,
-                                        clan_tag=player_obj.clan_tag
+                                        clan_tag=player_obj.clan_tag,
+                                        achv_total_donations=player_obj.achv_total_donations,
+                                        achv_th_destroyed=player_obj.achv_th_destroyed
                                        )
 
         db.session.add(player_entry)
@@ -74,5 +78,74 @@ class PlayerStatsCurrent(db.Model):
         return player_entry
 
 
-# class HistoricPlayerStats(db.Model):
-#     pass
+class PlayerStatsHistoric(db.Model):
+
+    # player_id = db.Column(db.Integer, unique=True, nullable=False, autoincrement=True, primary_key=True)
+    player_tag = db.Column(db.String(20), nullable=False)
+    created_time = db.Column(db.DateTime, default=datetime.utcnow, index=True)
+
+    __table_args__ = (
+        PrimaryKeyConstraint('player_tag', 'created_time'),
+        {},
+    )
+
+    player_name = db.Column(db.String(80), nullable=False)
+    exp_level = db.Column(db.Integer, nullable=False)
+    current_league = db.Column(db.String(20))
+    current_trophies = db.Column(db.Integer, nullable=False)
+    attack_wins = db.Column(db.Integer, nullable=False)
+    defense_wins = db.Column(db.Integer, nullable=False)
+    donations_given = db.Column(db.Integer, nullable=False)
+    donations_received = db.Column(db.Integer, nullable=False)
+    war_stars = db.Column(db.Integer, nullable=False)
+    town_hall_level = db.Column(db.Integer, nullable=False)
+    king_level = db.Column(db.Integer)
+    queen_level = db.Column(db.Integer)
+    warden_level = db.Column(db.Integer)
+    battle_machine_Level = db.Column(db.Integer)
+    achv_th_destroyed = db.Column(db.Integer)
+    achv_total_donations = db.Column(db.Integer)
+
+    # player_id = db.Column(db.Integer, db.ForeignKey("player_stats_current.player_id"), index=True)
+
+    clan_tag = db.Column(db.String(20), db.ForeignKey("clan_stats_current.clan_tag"), index=True)
+    # clan = db.relationship('ClanStatsCurrent', backref=db.backref('members', lazy=True))
+
+    updated_time = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+    @classmethod
+    def create_from_player_tag(cls, player_tag, player_obj=None, skip_clan_create=False):
+        if not player_obj:
+            player_obj = PlayerData(player_tag)
+
+        _clan_tag = player_obj.clan_tag
+
+        if not skip_clan_create:
+            get_or_create_clan(_clan_tag)
+
+        player_entry = PlayerStatsHistoric(
+            player_tag=player_obj.player_tag,
+            created_time=datetime.utcnow(),
+            player_name=player_obj.player_name,
+            exp_level=player_obj.exp_level,
+            current_league=player_obj.league_name,
+            current_trophies=player_obj.current_trophies,
+            attack_wins=player_obj.attack_wins,
+            defense_wins=player_obj.defense_wins,
+            donations_given=player_obj.donations_given,
+            donations_received=player_obj.donations_received,
+            war_stars=player_obj.war_stars,
+            town_hall_level=player_obj.town_hall_level,
+            king_level=player_obj.king_level,
+            queen_level=player_obj.queen_level,
+            warden_level=player_obj.warden_level,
+            battle_machine_Level=player_obj.battle_machine_Level,
+            clan_tag=player_obj.clan_tag,
+            achv_total_donations=player_obj.achv_total_donations,
+            achv_th_destroyed=player_obj.achv_th_destroyed
+        )
+
+        db.session.add(player_entry)
+
+        return player_entry

@@ -16,12 +16,18 @@ class PlayerData:
         self.donations_given = None
         self.donations_received = None
         self.exp_level = None
+        self.war_stars = None
+        self.clan_tag = None
+
+        # Heroes
         self.king_level = None
         self.queen_level = None
         self.warden_level = None
         self.battle_machine_Level = None
-        self.war_stars = None
-        self.clan_tag = None
+
+        # Achievements
+        self.achv_th_destroyed = None
+        self.achv_total_donations = None
         self.get_player_info()
 
     def parse_hero_info(self, heroList):
@@ -35,6 +41,15 @@ class PlayerData:
                 self.queen_level = hero.get('level')
             elif hero['name'] == 'Grand Warden':
                 self.warden_level = hero.get('level')
+
+    def parse_achievements(self, achievementsList):
+
+        for achv in achievementsList:
+            if achv['name'] == 'Humiliator':
+                self.achv_th_destroyed = achv.get('value')
+
+            elif achv['name'] == 'Friend in Need':
+                self.achv_total_donations = achv.get('value')
 
     def get_player_info(self):
         player_info = ClashAPI().get_player_info_from_tag(self.player_tag)
@@ -50,7 +65,8 @@ class PlayerData:
         self.clan_tag = player_info.get('clan').get('tag')
         self.league_name = player_info.get('league', {}).get('name')
 
-        self.parse_hero_info(player_info.get('heroes'))
+        self.parse_hero_info(player_info.get('heroes', []))
+        self.parse_achievements(player_info.get('achievements', []))
 
 
 
