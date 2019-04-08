@@ -2,7 +2,6 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import config
-import app.models
 
 project_dir = os.path.dirname(os.path.abspath(__file__))
 database_file = "sqlite:///{}".format(os.path.join(project_dir, "db/clashdatabase.db"))
@@ -16,4 +15,5 @@ flaskapp.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(flaskapp)
 
 if __name__ == '__main__':
+    import app.models
     db.create_all()
