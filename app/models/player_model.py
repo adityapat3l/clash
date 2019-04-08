@@ -2,7 +2,7 @@ from clashmanager import db
 from app.compute import clan as clan_math
 from datetime import datetime
 from app.collector import PlayerData
-import app.models.clan_model as clan_model
+from app.models import clan_model
 from sqlalchemy import PrimaryKeyConstraint
 
 
