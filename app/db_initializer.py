@@ -8,6 +8,7 @@ def initialize():
 
     for clan_tag in config.STARTING_CLAN_TAG_LIST:
         feeder.populate_clan_details(clan_tag)
+        feeder.populate_historic_clan_details(clan_tag)
 
     db.session.commit()
 
