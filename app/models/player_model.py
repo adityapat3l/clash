@@ -4,6 +4,7 @@ from datetime import datetime
 from app.collector import PlayerData
 from app.models import clan_model
 from sqlalchemy import PrimaryKeyConstraint
+from sqlalchemy.dialects.mysql import INTEGER
 
 
 def get_or_create_clan(clan_tag):
@@ -35,6 +36,8 @@ class PlayerStatsCurrent(db.Model):
     battle_machine_Level = db.Column(db.Integer)
     achv_th_destroyed = db.Column(db.Integer)
     achv_total_donations = db.Column(db.Integer)
+    achv_gold_looted = db.Column(INTEGER(unsigned=True))
+    achv_exlier_looted = db.Column(INTEGER(unsigned=True))
 
     clan_tag = db.Column(db.String(20), db.ForeignKey("clan_stats_current.clan_tag"), index=True)
     # clan = db.relationship('ClanStatsCurrent', backref=db.backref('members', lazy=True))
@@ -70,7 +73,9 @@ class PlayerStatsCurrent(db.Model):
                                         battle_machine_Level=player_obj.battle_machine_Level,
                                         clan_tag=player_obj.clan_tag,
                                         achv_total_donations=player_obj.achv_total_donations,
-                                        achv_th_destroyed=player_obj.achv_th_destroyed
+                                        achv_th_destroyed=player_obj.achv_th_destroyed,
+                                        achv_gold_looted=player_obj.achv_gold_looted,
+                                        achv_exlier_looted=player_obj.achv_exlier_looted
                                        )
 
         db.session.add(player_entry)
@@ -105,6 +110,8 @@ class PlayerStatsHistoric(db.Model):
     battle_machine_Level = db.Column(db.Integer)
     achv_th_destroyed = db.Column(db.Integer)
     achv_total_donations = db.Column(db.Integer)
+    achv_gold_looted = db.Column(INTEGER(unsigned=True))
+    achv_exlier_looted = db.Column(INTEGER(unsigned=True))
 
     # player_id = db.Column(db.Integer, db.ForeignKey("player_stats_current.player_id"), index=True)
 
@@ -143,7 +150,9 @@ class PlayerStatsHistoric(db.Model):
             battle_machine_Level=player_obj.battle_machine_Level,
             clan_tag=player_obj.clan_tag,
             achv_total_donations=player_obj.achv_total_donations,
-            achv_th_destroyed=player_obj.achv_th_destroyed
+            achv_th_destroyed=player_obj.achv_th_destroyed,
+            achv_gold_looted=player_obj.achv_gold_looted,
+            achv_exlier_looted=player_obj.achv_exlier_looted
         )
 
         db.session.add(player_entry)
