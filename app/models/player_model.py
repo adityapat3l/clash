@@ -112,6 +112,7 @@ class PlayerStatsHistoric(db.Model):
     achv_total_donations = db.Column(db.Integer)
     achv_gold_looted = db.Column(INTEGER(unsigned=True))
     achv_exlier_looted = db.Column(INTEGER(unsigned=True))
+    achv_dark_looted = db.Column(INTEGER(unsigned=True))
 
     # player_id = db.Column(db.Integer, db.ForeignKey("player_stats_current.player_id"), index=True)
 
@@ -152,7 +153,8 @@ class PlayerStatsHistoric(db.Model):
             achv_total_donations=player_obj.achv_total_donations,
             achv_th_destroyed=player_obj.achv_th_destroyed,
             achv_gold_looted=player_obj.achv_gold_looted,
-            achv_exlier_looted=player_obj.achv_exlier_looted
+            achv_exlier_looted=player_obj.achv_exlier_looted,
+            achv_dark_looted=player_obj.achv_dark_looted
         )
 
         db.session.add(player_entry)

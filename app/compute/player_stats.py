@@ -20,24 +20,29 @@ class PlayerStats:
         if player_name and not player_tag:
             player_df = self.full_hist_df[self.full_hist_df['player_name'] == player_name]
 
-            #             return player_df
-
             player_tag_list = player_df['player_tag'].unique()
 
             if player_tag_list.shape[0] > 1:
                 raise ValueError("Duplicate Player Name. Please enter a player tag")
-            else:
-                player_tag = player_tag_list[0]
+
         else:
             player_df = self.full_hist_df[self.full_hist_df['player_tag'] == player_tag]
 
-        max_metric = player_df.loc[player_df['created_time'] == player_df['created_time'].max()][metric]
-        min_metric = player_df.loc[player_df['created_time'] == player_df['created_time'].min()][metric]
+        player_df = player_df[~player_df[metric].isna()]
+
+        last_ts = player_df['created_time'].max()
+        first_ts = player_df['created_time'].min()
+
+        max_metric = player_df.loc[player_df['created_time'] == last_ts][metric]
+        min_metric = player_df.loc[player_df['created_time'] == first_ts][metric]
 
         diff = int(max_metric) - int(min_metric)
 
-        message = '{player_name} changed {diff} in {metric}'.format(player_name=player_name.title(),
+        message = '{player_name} changed {diff} in {metric} between {first_ts} and {last_ts}'.format(
+                                                                    player_name=player_name.title(),
                                                                     diff=diff,
-                                                                    metric=metric)
+                                                                    metric=metric,
+                                                                    last_ts=last_ts,
+                                                                    first_ts=first_ts)
 
         return message

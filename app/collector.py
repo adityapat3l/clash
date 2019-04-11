@@ -30,6 +30,7 @@ class PlayerData:
         self.achv_total_donations = None
         self.achv_exlier_looted = None
         self.achv_gold_looted = None
+        self.achv_dark_looted = None
         self.get_player_info()
 
     def parse_hero_info(self, heroList):
@@ -58,6 +59,9 @@ class PlayerData:
 
             elif achv['name'] == 'Elixir Escapade':
                 self.achv_exlier_looted = achv.get('value')
+
+            elif achv['name'] == 'Heroic Heist':
+                self.achv_dark_looted = achv.get('value')
 
     def get_player_info(self):
         player_info = ClashAPI().get_player_info_from_tag(self.player_tag)
