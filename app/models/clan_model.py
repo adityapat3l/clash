@@ -1,5 +1,4 @@
 from clashmanager import db
-from app.compute import clan as clan_math
 from datetime import datetime
 from app.collector import ClanData, ClashAPI
 from app.models.player_model import PlayerStatsCurrent

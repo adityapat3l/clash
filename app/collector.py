@@ -28,7 +28,7 @@ class PlayerData:
         # Achievements
         self.achv_th_destroyed = None
         self.achv_total_donations = None
-        self.achv_exlier_looted = None
+        self.achv_elixer_looted = None
         self.achv_gold_looted = None
         self.achv_dark_looted = None
         self.get_player_info()
@@ -58,7 +58,7 @@ class PlayerData:
                 self.achv_gold_looted = achv.get('value')
 
             elif achv['name'] == 'Elixir Escapade':
-                self.achv_exlier_looted = achv.get('value')
+                self.achv_elixer_looted = achv.get('value')
 
             elif achv['name'] == 'Heroic Heist':
                 self.achv_dark_looted = achv.get('value')

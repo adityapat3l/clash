@@ -1,6 +1,7 @@
 class PlayerStats:
     def __init__(self, full_hist_df):
         self.full_hist_df = full_hist_df.copy(deep=True)
+        self.clan_df = None
         self.player_df = None
 
         self.full_hist_df['player_name'] = self.full_hist_df['player_name'].str.lower()
