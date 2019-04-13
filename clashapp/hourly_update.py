@@ -1,7 +1,7 @@
-import app.feeder as feeder
+import clashapp.feeder as feeder
 import config
-from clashmanager import db
-from app.models import ClanStatsCurrent
+from clashapp import db
+from clashapp.models import ClanStatsCurrent
 
 def update():
 

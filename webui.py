@@ -1,7 +1,7 @@
-from clashmanager import flaskapp, db
-from app.models import clan_model, player_model
+from clashapp import flaskapp, db
+from clashapp.models import clan_model, player_model
 from flask import render_template, request, redirect
-from app.collector import ClanData
+from clashapp.collector import ClanData
 
 
 @flaskapp.route('/', methods=["GET", "POST"])

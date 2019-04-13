@@ -1,7 +1,7 @@
-from clashmanager import db
+from clashapp import db
 from datetime import datetime
-from app.collector import PlayerData
-from app.models import clan_model
+from clashapp.collector import PlayerData
+from clashapp.models import clan_model
 from sqlalchemy import PrimaryKeyConstraint
 from sqlalchemy.dialects.mysql import INTEGER
 

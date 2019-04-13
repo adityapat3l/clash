@@ -1,6 +1,6 @@
-import app.feeder as feeder
+import clashapp.feeder as feeder
 import config
-from clashmanager import db
+from clashapp import db
 
 def initialize():
     db.drop_all()

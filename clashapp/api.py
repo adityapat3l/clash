@@ -1,7 +1,7 @@
 import requests
 import json
 import config
-import app.lib.urls as clashurl
+import clashapp.lib.urls as clashurl
 try:
     from urllib import quote  # Python2
 except ImportError:

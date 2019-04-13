@@ -13,7 +13,7 @@
 # flaskapp.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 #
 # db = SQLAlchemy(flaskapp)
-#
+
 # if __name__ == '__main__':
 #     import clashapp.models
 #     db.create_all()

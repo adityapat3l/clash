@@ -1,5 +1,5 @@
 from __future__ import print_function, division
-from app.api import ClashAPI
+from clashapp.api import ClashAPI
 from pprint import pprint
 
 

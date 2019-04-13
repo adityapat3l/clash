@@ -1,6 +1,6 @@
-from app.api import ClashAPI
+from clashapp.api import ClashAPI
 from pprint import pprint
-from app.collector import ClanData, PlayerData
+from clashapp.collector import ClanData, PlayerData
 import argparse
 
 

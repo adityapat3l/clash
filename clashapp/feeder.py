@@ -1,7 +1,7 @@
-from app.models import PlayerStatsCurrent, ClanStatsCurrent, PlayerStatsHistoric
-from app.collector import ClanData, PlayerData
+from clashapp.models import PlayerStatsCurrent, ClanStatsCurrent, PlayerStatsHistoric
+from clashapp.collector import ClanData, PlayerData
 from sqlalchemy import exists
-from clashmanager import db
+from clashapp import db
 
 # TODO: Make this a class so that ClanData and PlayerData only get called once when functions are used multiple times.
 

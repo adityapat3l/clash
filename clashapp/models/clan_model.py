@@ -1,7 +1,7 @@
-from clashmanager import db
+from clashapp import db
 from datetime import datetime
-from app.collector import ClanData, ClashAPI
-from app.models.player_model import PlayerStatsCurrent
+from clashapp.collector import ClanData, ClashAPI
+from clashapp.models.player_model import PlayerStatsCurrent
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy import func
 
