@@ -7,16 +7,15 @@ from webui.pages import member_stats, comparitive_stats
 from webui.components import Header
 
 
-
 # overview = html.Div([Header()])
 
 index_page = html.Div(children=[
     html.H1(
-        children='Welcome to ClashLytics',
+        children='Welcome to clashboard',
         style={
             'textAlign': 'center',
-             'color': 'blue',
-            'background-color': 'yellow'
+             'color': 'darkblue',
+            'background-color': 'lightyellow'
         }
 
     ),
@@ -26,9 +25,22 @@ index_page = html.Div(children=[
              'font': '16px',
              'color': 'grey',
     }),
-    dcc.Link('Member Analytics', href='/member_analytics'),
+    html.Div([
+    dcc.Link('Member Analytics', href='/member_analytics', className='nav_links',
+             style={
+                 'textAlign': 'center',
+                'width': '100%',
+                'display': 'block'},
+             ),
     html.Br(),
-    dcc.Link('Comparison Between Members', href='/comparison'),
+    dcc.Link('Comparison Between Members', href='/comparison', className='nav_links',
+             style={
+                 'textAlign': 'center',
+                 'width': '100%',
+                 'display': 'block'},
+             ),
+
+    ])
     ])
 
 app.layout = html.Div([

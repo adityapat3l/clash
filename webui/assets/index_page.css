@@ -1,0 +1,29 @@
+.nav_links {
+    background-color: red;
+    color: white;
+    padding: 1em 1em;
+    text-decoration: none;
+    text-transform: uppercase;
+}
+
+.nav_links:hover {
+    background-color: #205067;
+}
+
+.nav_links:active {
+    background-color: cornflowerblue;
+}
+
+.nav_links:visited {
+    background-color: #5E5694;
+}
+
+
+
+/* Non-Demo Styles */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}

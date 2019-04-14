@@ -49,11 +49,15 @@ member_page = html.Div([
     html.Div([
         dcc.Link('Back To Index',
                     href='/index',
+                    className='nav_links',
                     style={
-                        'width': '49%'},
+                        'width': '49%',
+                         'display': 'block'},
                     ),
+        html.Br(),
         dcc.Link('Comparison Between Members',
                  href='/comparison',
+                 className='nav_links',
                  style={
                      'width': '49%',
                      'display': 'block'},
