@@ -14,19 +14,19 @@ member_page = html.Div([
             }
         )]),
     html.Div([
-        html.H2("Select a Metric: "),
+        html.H2("Select a Chart Type: "),
         dcc.RadioItems(
             id='chart_type',
             options=[
                 {'label': 'All History', 'value': 'history'},
-                {'label': 'Collection Start', 'value': 'limited_start'},
+                {'label': 'Set Start as 0', 'value': 'limited_start'},
             ],
             value="limited_start",
             style={'display': 'block'},
             className='ChartType'
         )]),
     html.Div([
-        html.H2("Select a Metric: "),
+        html.H2("Select a Metric and Player: "),
         dcc.Dropdown(
             id='metric_name',
             options=[
