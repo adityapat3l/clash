@@ -30,8 +30,7 @@ def get_player_history_df(player_tag, metric='current_trophies'):
         data_list.append(getattr(fact, metric))
         created_time_list.append(fact.created_time)
 
-    df = pd.DataFrame(created_time_list, data_list).reset_index()
-    df.columns = ['created_time', metric]
+    df = pd.DataFrame({'created_time': created_time_list, metric: data_list})
 
     return df
 
@@ -52,4 +51,4 @@ def get_clan_player_dropdown_list(clan_name='For Aiur'):
     return sorted_output
 
 if __name__ == '__main__':
-    print(player_history_start_as_0('#8292J8QV8', 'donations_given'))
+    print(get_player_history_df('#8292J8QV8', metric='donations_received'))
