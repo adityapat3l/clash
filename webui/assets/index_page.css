@@ -1,29 +1,41 @@
-.nav_links {
-    background-color: red;
+.NavLinks {
+    background-color: purple;
     color: white;
     padding: 1em 1em;
     text-decoration: none;
     text-transform: uppercase;
 }
 
-.nav_links:hover {
+.NavLinks:hover {
     background-color: #205067;
 }
 
-.nav_links:active {
+.NavLinks:active {
     background-color: cornflowerblue;
 }
 
-.nav_links:visited {
+.NavLinks:visited {
     background-color: #5E5694;
 }
 
+/*.RadioButton {*/
+    /*display: flex;*/
+    /*position: relative;*/
+    /*padding-left: 35px;*/
+    /*margin-bottom: 12px;*/
+    /*cursor: pointer;*/
+    /*font-size: 22px;*/
+    /*-webkit-user-select: none;*/
+    /*-moz-user-select: none;*/
+    /*-ms-user-select: none;*/
+    /*user-select: none;*/
+/*}*/
 
 
-/* Non-Demo Styles */
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
+ /*Non-Demo Styles */
+/*body {*/
+    /*display: flex;*/
+    /*justify-content: center;*/
+    /*align-items: center;*/
+    /*height: 100vh;*/
+/*}*/

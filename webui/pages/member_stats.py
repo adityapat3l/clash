@@ -13,12 +13,21 @@ member_page = html.Div([
                 'textAlign': 'center',
             }
         )]),
-
-    html.Div(children='Graphs for every measurable stat in the game', style={
-        'textAlign': 'center'
-    }),
     html.Div([
+        html.H2("Select a Metric: "),
         dcc.RadioItems(
+            id='chart_type',
+            options=[
+                {'label': 'All History', 'value': 'history'},
+                {'label': 'Collection Start', 'value': 'limited_start'},
+            ],
+            value="limited_start",
+            style={'display': 'block'},
+            className='ChartType'
+        )]),
+    html.Div([
+        html.H2("Select a Metric: "),
+        dcc.Dropdown(
             id='metric_name',
             options=[
                 {'label': 'Trophy Level', 'value': 'current_trophies'},
@@ -34,9 +43,11 @@ member_page = html.Div([
                 {'label': 'Queen Level', 'value': 'queen_level'},
                 {'label': 'Warden Level', 'value': 'warden_level'}
             ],
-            value="current_trophies",
-            style={'display': 'flex'}
-    )]),
+            # value="current_trophies",
+            placeholder="Select a metric to plot",
+            # style={'display': 'flex', 'width': '49%'},
+            className='MetricType'
+                        )]),
     html.Div([
         dcc.Dropdown(
             id='player_name',
@@ -44,12 +55,15 @@ member_page = html.Div([
             placeholder="Select a player to plot",
              ),
     ]),
-    dcc.Graph(id='my-graph'),
+    dcc.Graph(id='my-graph'
+              ),
+
 
     html.Div([
+        html.Hr(),
         dcc.Link('Back To Index',
                     href='/index',
-                    className='nav_links',
+                    className='NavLinks',
                     style={
                         'width': '49%',
                          'display': 'block'},
@@ -57,7 +71,7 @@ member_page = html.Div([
         html.Br(),
         dcc.Link('Comparison Between Members',
                  href='/comparison',
-                 className='nav_links',
+                 className='NavLinks',
                  style={
                      'width': '49%',
                      'display': 'block'},
@@ -67,19 +81,23 @@ member_page = html.Div([
 
 
 @app.callback(Output('my-graph', 'figure'),
-              [Input('player_name', 'value'),
+              [Input('chart_type', 'value'),
+               Input('player_name', 'value'),
                Input('metric_name', 'value')])
-def update_graph(player_tag, metric_name):
+def update_graph(chart_type, player_tag, metric_name):
 
     if not player_tag or not metric_name:
         return {}
 
-    dff = dp.get_player_history_df(player_tag, metric=metric_name)
+    if chart_type == 'history':
+        dff = dp.get_player_history_df(player_tag, metric=metric_name)
+    else:
+        dff = dp.player_limited_history_start(player_tag, metric=metric_name)
 
     return {
         'data': [{
-            'x': dff[metric_name],
-            'y': dff.created_time,
+            'y': dff[metric_name],
+            'x': dff.created_time,
             'line': {
                 'width': 3,
                 'shape': 'spline'

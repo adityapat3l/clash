@@ -1,6 +1,24 @@
-from clashapp.models import PlayerStatsHistoric, ClanStatsCurrent
+from clashapp.models import PlayerStatsHistoric, ClanStatsCurrent, PlayerStatsCurrent
 import pandas as pd
+from clashapp import db
 
+player_history_query = '''
+SELECT created_time,
+      {metric} -
+      first_value({metric}) OVER (PARTITION BY player_tag ORDER BY created_time) AS {metric}_gained
+FROM player_stats_historic
+WHERE player_tag = '{player_tag}'
+ AND {metric} IS NOT NULL
+and created_time >= '2019-04-09'
+'''
+
+def player_limited_history_start(player_tag, metric='current_trophies'):
+
+    a = db.engine.execute(player_history_query.format(metric=metric, player_tag=player_tag))
+    names = [row for row in a]
+    df = pd.DataFrame(names)
+    df.columns = ['created_time', metric]
+    return df
 
 def get_player_history_df(player_tag, metric='current_trophies'):
 
@@ -34,4 +52,4 @@ def get_clan_player_dropdown_list(clan_name='For Aiur'):
     return sorted_output
 
 if __name__ == '__main__':
-    print(get_player_history_df('#8292J8QV8'))
+    print(player_history_start_as_0('#8292J8QV8', 'donations_given'))

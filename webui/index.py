@@ -26,14 +26,14 @@ index_page = html.Div(children=[
              'color': 'grey',
     }),
     html.Div([
-    dcc.Link('Member Analytics', href='/member_analytics', className='nav_links',
+    dcc.Link('Member Analytics', href='/member_analytics', className='NavLinks',
              style={
                  'textAlign': 'center',
                 'width': '100%',
                 'display': 'block'},
              ),
     html.Br(),
-    dcc.Link('Comparison Between Members', href='/comparison', className='nav_links',
+    dcc.Link('Comparison Between Members', href='/comparison', className='NavLinks',
              style={
                  'textAlign': 'center',
                  'width': '100%',
@@ -41,7 +41,7 @@ index_page = html.Div(children=[
              ),
 
     ])
-    ])
+    ], className='index_page')
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
@@ -64,4 +64,4 @@ def display_page(pathname):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True, port=5000)
+    app.run_server(debug=True, port=8080)
