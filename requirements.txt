@@ -3,3 +3,4 @@ dash==0.41.0
 flask-sqlalchemy==2.3.2
 pandas==0.24.2
 pymysql==0.9.3
+dash-daq==0.1.4

@@ -45,7 +45,7 @@ index_page = html.Div(children=[
 
 app.layout = html.Div([
     dcc.Location(id='url', refresh=False),
-    html.Div(id='page-content')
+    html.Div(id='page-content'),
     # html.Div([Header()])
 ])
 
@@ -56,7 +56,7 @@ def display_page(pathname):
     if pathname == '/member_analytics':
         return member_stats.member_page
     elif pathname == '/comparison':
-        return comparitive_stats
+        return comparitive_stats.comparison_page
     elif pathname == 'index':
         return index_page
     else:
@@ -64,4 +64,4 @@ def display_page(pathname):
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True, host='0.0.0.0', port=80)
+    app.run_server(debug=True,  port=5000)

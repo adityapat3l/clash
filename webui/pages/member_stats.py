@@ -98,9 +98,11 @@ def update_graph(chart_type, player_tag, metric_name):
         'data': [{
             'y': dff[metric_name],
             'x': dff.created_time,
+            'mode': 'lines',
+            'marker': {'size': 12},
             'line': {
                 'width': 3,
-                'shape': 'spline'
+                'shape': 'spline',
             }
         }]
     }

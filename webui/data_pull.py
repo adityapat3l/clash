@@ -12,6 +12,11 @@ WHERE player_tag = '{player_tag}'
 and created_time >= '2019-04-09'
 '''
 
+
+def get_player_name(player_tag):
+    player = PlayerStatsCurrent.query.filter_by(player_tag=player_tag).first()
+    return player.player_name
+
 def player_limited_history_start(player_tag, metric='current_trophies'):
 
     a = db.engine.execute(player_history_query.format(metric=metric, player_tag=player_tag))
@@ -51,4 +56,4 @@ def get_clan_player_dropdown_list(clan_name='For Aiur'):
     return sorted_output
 
 if __name__ == '__main__':
-    print(get_player_history_df('#8292J8QV8', metric='donations_received'))
+    print(get_player_name('#8292J8QV8'))
