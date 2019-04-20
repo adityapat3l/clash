@@ -25,24 +25,42 @@ comparison_page = html.Div([
             {'label': 'Queen Level', 'value': 'queen_level'},
             {'label': 'Warden Level', 'value': 'warden_level'}
         ],
-        value='current_trophies'
+        value='current_trophies',
     ),
 
     html.Div([
         dcc.Dropdown(
-            id='player_name',
+            id='player-name',
             placeholder="Select a player to plot",
             options=dp.get_clan_player_dropdown_list(),
             multi=True
         ),
     ]),
     html.Br(),
-    daq.BooleanSwitch(
-        id='hover-switch',
-        label='Hover(On/Off)',
-        on=True,
-        style={'display': 'flex'}
-    ),
+    html.Div([
+        daq.BooleanSwitch(
+            id='hover-switch',
+            label='Hover(On/Off)',
+            on=True,
+            style={'display': 'flex'}
+        ),
+        html.Br(),
+        dcc.RadioItems(
+            id='data-type',
+            options=[
+                {'label': 'Relative', 'value': 'relative'},
+                {'label': 'Absolute', 'value': 'absolute'},
+            ],
+            value='relative',
+            style={'display': 'flex'}
+        ),
+        html.Br(),
+
+    ], style={'display': 'inline-block'}),
+    html.Br(),
+    html.Div(id='error-codes',
+             style={'color':'red',
+                    'font': '16px'}),
     html.Br(),
     html.Div([html.Button('Plot', id='graph-button'),
               # html.Button('Button', id='button-2')
@@ -50,9 +68,7 @@ comparison_page = html.Div([
              style={'display': 'inline'}
              ),
     dcc.Graph(id='comparison-graph'),
-
-    html.Div(id='error-codes'),
-
+    html.Br(),
     html.Div([
         html.Hr(),
         dcc.Link('Back To Index',
@@ -77,10 +93,16 @@ comparison_page = html.Div([
 def get_player_go_dict(player_tag, **kwargs):
 
     metric = kwargs.get('metric')
+    data_type=kwargs.get('data_type')
+
     hover = kwargs.get('hover')
     hover = 'all' if hover else 'skip'
 
-    df = dp.player_limited_history_start(player_tag, metric=metric)
+    if data_type == 'absolute':
+        df = dp.player_limited_history_start(player_tag, metric=metric)
+    else:
+        df = dp.get_player_history_df(player_tag, metric=metric)
+
     player_name = dp.get_player_name(player_tag)
 
     trace = go.Scatter(
@@ -95,17 +117,32 @@ def get_player_go_dict(player_tag, **kwargs):
 
 @app.callback(
  Output('comparison-graph', 'figure'),
- [Input(component_id='graph-button', component_property='n_clicks'),],
- [State(component_id='player_name', component_property='value'),
+ [Input('graph-button', 'n_clicks')],
+ [State('player-name', 'value'),
   State('metric-name', 'value'),
-  State(component_id='hover-switch', component_property='on')])
-def update_graph(clicks, member_values, metric_name, hover_switch):
+  State('hover-switch', 'on'),
+  State('data-type', 'value')])
+def update_graph(clicks, member_values, metric_name, hover_switch, data_type):
 
     if clicks and member_values and metric_name:
 
         all_traces = []
         for member in member_values:
-            trace = get_player_go_dict(member, metric=metric_name, hover=hover_switch)
+            trace = get_player_go_dict(member, metric=metric_name, hover=hover_switch, data_type=data_type)
             all_traces.append(trace)
 
         return {'data': all_traces}
+    else:
+        return {}
+
+@app.callback(
+    Output('error-codes', 'children'),
+    [Input('graph-button', 'n_clicks')],
+    [State('player-name', 'value'),
+     State('metric-name', 'value'),
+     State('hover-switch', 'on'),
+     State('data-type', 'value')])
+def update_graph(clicks, member_values, metric_name, hover_switch, data_type):
+
+    if not member_values and clicks:
+        return "Select Atleast One Player "
