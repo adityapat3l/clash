@@ -2,7 +2,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 
-from webui.webapp import app
+from webui.webapp import app, server
 from webui.pages import member_stats, comparitive_stats
 from webui.components import Header
 
