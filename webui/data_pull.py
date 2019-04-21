@@ -1,6 +1,7 @@
 from clashapp.models import PlayerStatsHistoric, ClanStatsCurrent, PlayerStatsCurrent
 import pandas as pd
 from clashapp import db
+from webui.webapp import celery
 
 player_history_query = '''
 SELECT created_time,
@@ -13,11 +14,17 @@ and created_time >= '2019-04-09'
 '''
 
 
+@celery.task(acks_late=True)
 def get_player_name(player_tag):
     player = PlayerStatsCurrent.query.filter_by(player_tag=player_tag).first()
     return player.player_name
 
-def player_limited_history_start(player_tag, metric='current_trophies'):
+
+@celery.task
+def player_limited_history_start(player_tag, metric='current_trophies', **kwargs):
+
+    start_time = kwargs.get('start_time')
+    end_time = kwargs.get('end_time')
 
     a = db.engine.execute(player_history_query.format(metric=metric, player_tag=player_tag))
     names = [row for row in a]
@@ -25,6 +32,8 @@ def player_limited_history_start(player_tag, metric='current_trophies'):
     df.columns = ['created_time', metric]
     return df
 
+
+@celery.task
 def get_player_history_df(player_tag, metric='current_trophies'):
 
     history_df = PlayerStatsHistoric.query.filter_by(player_tag=player_tag).all()
@@ -40,6 +49,7 @@ def get_player_history_df(player_tag, metric='current_trophies'):
     return df
 
 
+@celery.task
 def get_clan_player_dropdown_list(clan_name='For Aiur'):
     clan = ClanStatsCurrent.query.filter_by(clan_name=clan_name).first()
 
@@ -54,6 +64,7 @@ def get_clan_player_dropdown_list(clan_name='For Aiur'):
     sorted_output = sorted(output, key=lambda k: k['label'].lower())
 
     return sorted_output
+
 
 if __name__ == '__main__':
     print(get_player_name('#8292J8QV8'))

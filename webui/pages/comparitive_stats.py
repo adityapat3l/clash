@@ -98,8 +98,8 @@ def get_player_go_dict(player_tag, **kwargs):
     hover = kwargs.get('hover')
     hover = 'all' if hover else 'skip'
 
-    if data_type == 'absolute':
-        df = dp.player_limited_history_start(player_tag, metric=metric)
+    if data_type == 'relative':
+        df = dp.player_limited_history_start(player_tag, metric=metric, start_time=None, end_time=None)
     else:
         df = dp.get_player_history_df(player_tag, metric=metric)
 
