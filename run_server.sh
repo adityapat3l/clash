@@ -4,4 +4,6 @@
 cd /home/apatel/clash
 source venv/bin/activate
 
-sudo gunicorn --bind 0.0.0.0:80 webui.index:server
+export PYTHONPATH=~/clash/
+sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
+venv/bin/gunicorn --bind 0.0.0.0:8080 webui.index:server
