@@ -2,6 +2,7 @@ from clashapp import db
 from sqlalchemy.sql import text
 import datetime
 from contextlib import closing
+from datetime import timedelta
 
 # I would create a real TEMP table but my Mysql host does't let me
 CREATE_TEMP_TABLE = """ 
@@ -53,26 +54,32 @@ COLUMN_METRICS = ['achv_dark_looted', 'achv_gold_looted', 'achv_elixer_looted', 
                   'town_hall_level', 'war_stars', 'donations_received', 'donations_given',
                   'attack_wins', 'defense_wins', 'current_trophies', 'exp_level']
 
-metric_name = 'achv_dark_looted'
-player_name = 'adi'
-start_date = datetime.datetime(2019, 4, 8)
 
-with closing(db.engine.connect()) as con:
+def populate_m_player_stats(metric_name, start_date=datetime.datetime(2019, 4, 8)):
+    with closing(db.engine.connect()) as con:
 
-    create_table_stmt = text(CREATE_TEMP_TABLE.format(metric=metric_name))
-    create_staging_table = text(CREATE_STAGING_TABLE)
-    insert_staging_table = (text(INSERT_INTO_STAGING.format(metric=metric_name)))
-    delete_dups = text(DELETE_DUPLICATE_DATA)
-    insert_new_data = text(INSERT_DATA)
-    drop_staging = text(DROP_STAGING_TABLE)
-    drop_statement = text(DROP_TEMP_TABLE)
+        create_table_stmt = text(CREATE_TEMP_TABLE.format(metric=metric_name))
+        create_staging_table = text(CREATE_STAGING_TABLE)
+        insert_staging_table = (text(INSERT_INTO_STAGING.format(metric=metric_name)))
+        delete_dups = text(DELETE_DUPLICATE_DATA)
+        insert_new_data = text(INSERT_DATA)
+        drop_staging = text(DROP_STAGING_TABLE)
+        drop_statement = text(DROP_TEMP_TABLE)
 
-    con.execute(create_table_stmt)
-    con.execute(create_staging_table)
-    con.execute(insert_staging_table, start_date=start_date)
-    con.execute(delete_dups)
-    con.execute(insert_new_data)
-    con.execute(drop_statement)
-    con.execute(drop_staging)
+        con.execute(create_table_stmt)
+        con.execute(create_staging_table)
+        con.execute(insert_staging_table, start_date=start_date)
+        con.execute(delete_dups)
+        con.execute(insert_new_data)
+        con.execute(drop_statement)
+        con.execute(drop_staging)
 
 
+def run_populate(start_date):
+    for col_name in COLUMN_METRICS:
+        populate_m_player_stats(col_name, start_date=start_date)
+
+
+if __name__ == '__main__':
+    query_start_date = datetime.datetime.utcnow() - timedelta(days=1)
+    run_populate(run_populate(query_start_date.date()))
