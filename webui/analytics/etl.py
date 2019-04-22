@@ -8,7 +8,7 @@ from datetime import timedelta
 CREATE_TEMP_TABLE = """ 
 create table temp_modified_table as (
 select
-  player_tag, player_name, date(created_time) as created_date, {metric} as metric_value ,
+  player_tag, player_name, date(created_time) as start_date, {metric} as metric_value ,
   rank() over (PARTITION BY player_tag, date(created_time)order by player_tag, created_time) as hour_rank,
   rank() over (PARTITION BY player_tag, date(created_time)order by player_tag, created_time desc) as hour_rank_desc
 from player_stats_historic);"""
@@ -24,17 +24,22 @@ create table temp_m_player_stats (
 ) CHARSET=utf8;"""
 
 INSERT_INTO_STAGING = """
-insert into temp_m_player_stats (player_tag, player_name, metric_name, start_date, metric_value)
-select player_tag, player_name,
-       '{metric}' as metric_name,
-       created_date as start_date,
-       max(case when hour_rank_desc = 1 then metric_value end) -
-          max(case when hour_rank = 1 then metric_value end) as metric_value
+insert into temp_m_player_stats (player_tag, player_name, start_date, metric_name, metric_value)
+
+select * from (
+select
+  player_tag,
+  player_name,
+  start_date,
+  '{metric}' as metric_name,
+
+  lead(metric_value) over (PARTITION BY player_tag ORDER BY start_date) - metric_value as metric_value
 from temp_modified_table
-where 
-created_date between :start_date and current_date - interval 1 day
-GROUP BY 1,2,3, 4
-having metric_value is not null"""
+where hour_rank = 1
+AND start_date >= :start_date
+order by 1,2,3,4) t
+where t.metric_value is not NULL;
+"""
 
 DELETE_DUPLICATE_DATA = """
 delete from ps
@@ -81,5 +86,5 @@ def run_populate(start_date):
 
 
 if __name__ == '__main__':
-    query_start_date = datetime.datetime.utcnow() - timedelta(days=1)
+    query_start_date = datetime.datetime.utcnow() - timedelta(days=2)
     run_populate(run_populate(query_start_date.date()))
