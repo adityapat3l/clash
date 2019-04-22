@@ -1,0 +1,1 @@
+CELERY_IMPORTS = ['webui.data_pull']

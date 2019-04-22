@@ -1,11 +1,12 @@
 import celery_config
 from celery import Celery
+import config
 
 
 def make_celery(app):
     celery = Celery(app.import_name,
                     backend='rpc://',
-                    broker='amqp://qkimbptm:ReMXxlAqYv6i-qde34kBSBsk9weou1eG@reindeer.rmq.cloudamqp.com/qkimbptm',
+                    broker=config.CELERY_BROKER_URL,
                     acks_late=False)
     celery.config_from_object(celery_config)
 
