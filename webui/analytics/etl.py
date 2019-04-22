@@ -21,7 +21,7 @@ create table temp_m_player_stats (
   start_date date,
   metric_value int(8),
   PRIMARY KEY (player_tag, metric_name, start_date)
-) CHARSET=utf8;"""
+) CHARSET=utf8mb4;"""
 
 INSERT_INTO_STAGING = """
 insert into temp_m_player_stats (player_tag, player_name, start_date, metric_name, metric_value)
