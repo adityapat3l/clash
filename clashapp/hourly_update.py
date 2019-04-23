@@ -4,7 +4,7 @@ from clashapp import db
 import logging
 import os
 import datetime
-from . import _commit_to_database
+from . import _commit_to_database, timber_handler
 
 cur_dir = os.getcwd()
 today_date = datetime.datetime.utcnow()
@@ -18,20 +18,21 @@ logging.basicConfig(level=logging.INFO,
                     filename=log_dir+'/hourly_update.log',
                     filemode='a',
                     format='%(asctime)s - %(module)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S')
-logging.getLogger(__name__)
 
+logger = logging.getLogger(__name__)
+logger.addHandler(timber_handler)
 
 def update():
 
-    logging.info("Starting Hourly Update")
+    logger.info("Starting Hourly Update")
     db.engine.execute('truncate table player_stats_current')
-    logging.info("Player Stats Truncated & Starting Repopulate")
+    logger.info("Player Stats Truncated & Starting Repopulate")
     for clan_tag in config.STARTING_CLAN_TAG_LIST:
         feeder.populate_historic_clan_details(clan_tag)
         feeder.rebuild_current_player_details(clan_tag)
 
     _commit_to_database()
-    logging.info("Sucessfully Finished Update")
+    logger.info("Sucessfully Finished Update")
 
 
 if __name__ == '__main__':

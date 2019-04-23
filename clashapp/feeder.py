@@ -2,10 +2,13 @@ from clashapp.models import PlayerStatsCurrent, ClanStatsCurrent, PlayerStatsHis
 from clashapp.collector import ClanData, PlayerData
 from sqlalchemy import exists
 from clashapp import db
-from . import _commit_to_database
+from . import _commit_to_database, timber_handler
 import logging
 import traceback
 import sys
+
+logger = logging.getLogger(__name__)
+logger.addHandler(timber_handler)
 
 # TODO: Make this a class so that ClanData and PlayerData only get called once when functions are used multiple times.
 
@@ -40,7 +43,7 @@ def populate_clan_details_init(clan_tag):
 
 def populate_historic_clan_details(clan_tag):
 
-    logging.info("Populating Player Stats History For Clan: {}".format(clan_tag))
+    logger.info("Populating Player Stats History For Clan: {}".format(clan_tag))
     try:
         clan = ClanData(clan_tag)
         members_list = clan.member_list_raw
@@ -49,14 +52,14 @@ def populate_historic_clan_details(clan_tag):
             member_tag = member.get('tag')
             populate_historic_member_details(member_tag)
     except Exception as err:
-        logging.error("Player Stats History Populate Failed")
-        logging.error(err.args)
-        logging.error(traceback.format_exception(*sys.exc_info()))
+        logger.error("Player Stats History Populate Failed")
+        logger.error(err.args)
+        logger.error(traceback.format_exception(*sys.exc_info()))
 
 
 def rebuild_current_player_details(clan_tag):
 
-    logging.info("Re-populating Player Current For Clan: {}".format(clan_tag))
+    logger.info("Re-populating Player Current For Clan: {}".format(clan_tag))
 
     try:
         clan = ClanData(clan_tag)
@@ -66,6 +69,6 @@ def rebuild_current_player_details(clan_tag):
             member_tag = member.get('tag')
             populate_member_details(member_tag)
     except Exception as err:
-        logging.error("Re-Populate Failed")
-        logging.error(err.args)
-        logging.error(traceback.format_exception(*sys.exc_info()))
+        logger.error("Re-Populate Failed")
+        logger.error(err.args)
+        logger.error(traceback.format_exception(*sys.exc_info()))

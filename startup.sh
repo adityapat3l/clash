@@ -1,6 +1,7 @@
 #!/bin/bash
 
 cd /home/apatel/clash
+mkdir logs
 cat requirements.txt | xargs -n 1 pip install
 
 
