@@ -14,7 +14,7 @@ and created_time >= '2019-04-09'
 '''
 
 
-@celery.task(acks_late=True)
+@celery.task
 def get_player_name(player_tag):
     player = PlayerStatsCurrent.query.filter_by(player_tag=player_tag).first()
     return player.player_name

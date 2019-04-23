@@ -5,4 +5,4 @@ create TABLE m_player_stats (
   start_date date,
   metric_value int(8),
   PRIMARY KEY (player_tag, metric_name, start_date)
-) CHARSET=utf8;
+) CHARSET=utf8mb4;
