@@ -34,7 +34,7 @@ def update():
         feeder.rebuild_current_player_details(clan_tag)
 
     _commit_to_database()
-    logger.info("Sucessfully Finished Update")
+    logger.info("Successfully Finished Update")
 
 
 if __name__ == '__main__':
