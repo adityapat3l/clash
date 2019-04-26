@@ -4,6 +4,7 @@ from clashapp import db
 import logging
 import os
 import datetime
+import sys
 from . import _commit_to_database, timber_handler
 
 cur_dir = os.getcwd()
@@ -22,6 +23,7 @@ logging.basicConfig(level=logging.INFO,
 logger = logging.getLogger(__name__)
 logger.addHandler(timber_handler)
 
+
 def update():
 
     logger.info("Starting Hourly Update")
@@ -36,4 +38,7 @@ def update():
 
 
 if __name__ == '__main__':
-    update()
+    try:
+        update()
+    except Exception as e:
+        raise

@@ -2,6 +2,8 @@ import requests
 import json
 import config
 import clashapp.lib.urls as clashurl
+import sys
+
 try:
     from urllib import quote  # Python2
 except ImportError:
@@ -23,16 +25,13 @@ class ClashAPI:
 
     def get_api_data(self, params=None):
         headers = {'Authorization': 'Bearer ' + config.DEV_ADMIN_API_KEY}
-        response = requests.get(
-            url=self.url,
-            headers=headers,
-            params=params)
-        # print("Currently GETing:" + response.url)
-        if response.status_code == 200:
+        try:
+            response = requests.get(url=self.url, headers=headers, params=params)
             data = json.loads(response.content.decode('utf-8'))
             return data
-        else:
-            raise ValueError('Clash API GET call failed with status code: ' + str(response.status_code))
+        except requests.exceptions.RequestException:  # This is the correct syntax
+            raise
+
 
     def get_player_info_from_tag(self, player_tag, params=None):
         self.create_url(clashurl.PLAYER_URL, path=player_tag)

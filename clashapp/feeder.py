@@ -55,6 +55,7 @@ def populate_historic_clan_details(clan_tag):
         logger.error("Player Stats History Populate Failed")
         logger.error(err.args)
         logger.error(traceback.format_exception(*sys.exc_info()))
+        raise
 
 
 def rebuild_current_player_details(clan_tag):
@@ -72,3 +73,4 @@ def rebuild_current_player_details(clan_tag):
         logger.error("Re-Populate Failed")
         logger.error(err.args)
         logger.error(traceback.format_exception(*sys.exc_info()))
+        raise
