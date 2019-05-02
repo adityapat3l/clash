@@ -1,5 +1,5 @@
 *.idea
-*config*
+config.py
 *__pycache__*
 *.pyc
 /venv

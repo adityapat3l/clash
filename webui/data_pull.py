@@ -34,14 +34,14 @@ and created_time >= '2019-04-09'
 '''
 
 
-@celery.task
-def _get_player_name(player_tag):
+# @celery.task
+def get_player_name(player_tag):
     player = PlayerStatsCurrent.query.filter_by(player_tag=player_tag).first()
     return player.player_name
 
 
-@celery.task
-def _player_limited_history_start(player_tag, metric='current_trophies', **kwargs):
+# @celery.task
+def player_limited_history_start(player_tag, metric='current_trophies', **kwargs):
 
     start_time = kwargs.get('start_time')
     end_time = kwargs.get('end_time')
@@ -50,11 +50,11 @@ def _player_limited_history_start(player_tag, metric='current_trophies', **kwarg
     df = pd.DataFrame(dt_metric_tuple)
     df.columns = ['created_time', metric]
 
-    return df.to_json()
+    return df
 
 
-@celery.task
-def _get_player_history_df(player_tag, metric='current_trophies'):
+# @celery.task
+def get_player_history_df(player_tag, metric='current_trophies'):
     history_df = PlayerStatsHistoric.query.filter_by(player_tag=player_tag).all()
 
     created_time_list = []
@@ -65,12 +65,12 @@ def _get_player_history_df(player_tag, metric='current_trophies'):
 
     df = pd.DataFrame({'created_time': created_time_list, metric: data_list})
 
-    return df.to_json()
+    return df
 
 
-@celery.task
-def _get_clan_player_dropdown_list(clan_name='For Aiur'):
-    clan = ClanStatsCurrent.query.filter_by(clan_name=clan_name).first()
+# @celery.task
+def get_clan_player_dropdown_list(clan_tag='#YUPCJJCR'):
+    clan = ClanStatsCurrent.query.filter_by(clan_tag=clan_tag).first()
 
     output = []
     for member in clan.clan_members:
@@ -85,54 +85,65 @@ def _get_clan_player_dropdown_list(clan_name='For Aiur'):
     return sorted_output
 
 
-def get_player_name(player_tag):
-    result = _get_player_name.delay(player_tag)
-    while not result.ready():
-        time.sleep(0.5)
-    player_name = result.get()
-    return player_name
+def get_clan_dropdown_list():
+    clan_list = ClanStatsCurrent.query.all()
+    output = [{'label': clan.clan_name,
+               'value': clan.clan_tag}
+              for clan in clan_list]
+
+    sorted_output = sorted(output, key=lambda k: k['label'].lower())
+
+    return sorted_output
 
 
-def get_clan_player_dropdown_list(clan_name='For Aiur'):
-    logger.info('Getting Dropdown for clan: {}'.format(clan_name))
-    result = _get_clan_player_dropdown_list.delay(clan_name=clan_name)
-    while not result.ready():
-        logger.info('Waiting on Dropdown')
-        time.sleep(0.5)
-    drop_down_list = result.get()
-    return drop_down_list
-
-
-def get_player_history_df(player_tag, metric='current_trophies'):
-    logger.info('Getting Player History for player: {} for metric: {}'.format(player_tag, metric))
-    result = _get_player_history_df.delay(player_tag, metric=metric)
-    while not result.ready():
-        logger.info('Waiting on Player History')
-        time.sleep(0.5)
-
-    df_json = result.get()
-    df = pd.read_json(df_json)
-
-    df.reset_index(drop=True, inplace=True)
-    df.sort_values('created_time', inplace=True)
-
-    return df
-
-
-def player_limited_history_start(player_tag, metric='current_trophies', **kwargs):
-    logger.info('Getting Player History for player: {} for metric: {}'.format(player_tag, metric))
-    result = _player_limited_history_start.delay(player_tag, metric=metric)
-    while not result.ready():
-        logger.info('Waiting on Player History')
-        time.sleep(0.5)
-    df_json = result.get()
-    df = pd.read_json(df_json)
-
-    df.reset_index(drop=True, inplace=True)
-    df.sort_values('created_time', inplace=True)
-
-    return df
+# def get_player_name(player_tag):
+#     result = _get_player_name.delay(player_tag)
+#     while not result.ready():
+#         time.sleep(0.5)
+#     player_name = result.get()
+#     return player_name
+#
+#
+# def get_clan_player_dropdown_list(clan_name='For Aiur'):
+#     logger.info('Getting Dropdown for clan: {}'.format(clan_name))
+#     result = _get_clan_player_dropdown_list.delay(clan_name=clan_name)
+#     while not result.ready():
+#         logger.info('Waiting on Dropdown')
+#         time.sleep(0.5)
+#     drop_down_list = result.get()
+#     return drop_down_list
+#
+#
+# def get_player_history_df(player_tag, metric='current_trophies'):
+#     logger.info('Getting Player History for player: {} for metric: {}'.format(player_tag, metric))
+#     result = _get_player_history_df.delay(player_tag, metric=metric)
+#     while not result.ready():
+#         logger.info('Waiting on Player History')
+#         time.sleep(0.5)
+#
+#     df_json = result.get()
+#     df = pd.read_json(df_json)
+#
+#     df.reset_index(drop=True, inplace=True)
+#     df.sort_values('created_time', inplace=True)
+#
+#     return df
+#
+#
+# def player_limited_history_start(player_tag, metric='current_trophies', **kwargs):
+#     logger.info('Getting Player History for player: {} for metric: {}'.format(player_tag, metric))
+#     result = _player_limited_history_start.delay(player_tag, metric=metric)
+#     while not result.ready():
+#         logger.info('Waiting on Player History')
+#         time.sleep(0.5)
+#     df_json = result.get()
+#     df = pd.read_json(df_json)
+#
+#     df.reset_index(drop=True, inplace=True)
+#     df.sort_values('created_time', inplace=True)
+#
+#     return df
 
 
 if __name__ == '__main__':
-    print(get_player_name('#8292J8QV8'))
+    print(get_clan_player_dropdown_list())
