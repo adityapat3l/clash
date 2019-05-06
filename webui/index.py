@@ -3,7 +3,7 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 
 from webui.webapp import app, server
-from webui.pages import member_stats, comparitive_stats
+from webui.pages import member_stats, comparitive_stats, activity_stats
 from webui.components import Header
 
 
@@ -39,6 +39,13 @@ index_page = html.Div(children=[
                  'width': '100%',
                  'display': 'block'},
              ),
+    html.Br(),
+    dcc.Link('Daily Analytics', href='/activity', className='NavLinks',
+             style={
+                 'textAlign': 'center',
+                 'width': '100%',
+                 'display': 'block'},
+             ),
 
     ])
     ], className='index_page')
@@ -57,6 +64,8 @@ def display_page(pathname):
         return member_stats.member_page
     elif pathname == '/comparison':
         return comparitive_stats.comparison_page
+    elif pathname == '/activity':
+        return activity_stats.activity
     elif pathname == 'index':
         return index_page
     else:

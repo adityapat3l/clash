@@ -33,6 +33,14 @@ WHERE player_tag = '{player_tag}'
 and created_time >= '2019-04-09'
 '''
 
+daily_activity = '''
+select start_date, metric_value as {metric}_gained
+from m_player_stats
+where metric_name = '{metric}'
+and player_tag = '{player_tag}'
+and start_date >= '2019-04-09';
+'''
+
 
 # @celery.task
 def get_player_name(player_tag):
@@ -52,6 +60,19 @@ def player_limited_history_start(player_tag, metric='current_trophies', **kwargs
 
     return df
 
+
+def get_m_player_daily_stats(player_tag, metric='current_trophies', **kwargs):
+
+    start_time = kwargs.get('start_time')
+    end_time = kwargs.get('end_time')
+
+    formatted_query = daily_activity.format(metric=metric, player_tag=player_tag)
+
+    dt_metric_tuple = db.engine.execute(formatted_query)
+    df = pd.DataFrame(dt_metric_tuple)
+    df.columns = ['created_time', metric]
+
+    return df
 
 # @celery.task
 def get_player_history_df(player_tag, metric='current_trophies'):
@@ -146,4 +167,4 @@ def get_clan_dropdown_list():
 
 
 if __name__ == '__main__':
-    print(get_clan_player_dropdown_list())
+    print(get_m_player_daily_stats('#8292J8QV8', metric='achv_dark_looted'))
