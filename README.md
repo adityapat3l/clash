@@ -13,7 +13,7 @@ You will need some credentials to get started:
 1) [Clash of Clans API KEY](https://developer.clashofclans.com/#/login)
 2) A mysql database (I use [Remote Mysql](https://remotemysql.com/), which is free)
 
-#####optional
+##### optional
 
 If you don't use these, you'll need to comment out some code.
 
@@ -28,7 +28,7 @@ This Project is Broken into 2 parts:
 ```
 
 ### Installing
-#####Install Requirements
+##### Install Requirements
 ```
 pip3 install -r requirement.txt
 ```
