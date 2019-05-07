@@ -17,6 +17,8 @@ flaskapp.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(flaskapp)
 
+API_KEY = config.DEV_ADMIN_API_KEY
+
 
 def _commit_to_database():
     """A shared function to make a

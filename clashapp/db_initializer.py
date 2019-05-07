@@ -3,7 +3,6 @@ import config
 from clashapp import db
 
 def initialize():
-    db.drop_all()
     db.create_all()
 
     for clan_tag in config.STARTING_CLAN_TAG_LIST:

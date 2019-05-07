@@ -56,16 +56,16 @@ activity = html.Div([
             style={'display': 'flex'}
         ),
         html.Br(),
-        dcc.RadioItems(
-            id='data-type-analytics',
-            options=[
-                {'label': 'Relative', 'value': 'relative'},
-                {'label': 'Absolute', 'value': 'absolute'},
-            ],
-            value='relative',
-            style={'display': 'flex'}
-        ),
-        html.Br(),
+        # dcc.RadioItems(
+        #     id='data-type-analytics',
+        #     options=[
+        #         {'label': 'Relative', 'value': 'relative'},
+        #         {'label': 'Absolute', 'value': 'absolute'},
+        #     ],
+        #     value='relative',
+        #     style={'display': 'flex'}
+        # ),
+        # html.Br(),
 
     ], style={'display': 'inline-block'}),
     html.Br(),

@@ -1,6 +1,6 @@
 import requests
 import json
-import config
+from . import API_KEY
 import clashapp.lib.urls as clashurl
 import sys
 
@@ -24,7 +24,7 @@ class ClashAPI:
             self.url = raw_url
 
     def get_api_data(self, params=None):
-        headers = {'Authorization': 'Bearer ' + config.DEV_ADMIN_API_KEY}
+        headers = {'Authorization': 'Bearer ' + API_KEY}
         try:
             response = requests.get(url=self.url, headers=headers, params=params)
             data = json.loads(response.content.decode('utf-8'))

@@ -6,4 +6,4 @@ source venv/bin/activate
 
 export PYTHONPATH=~/clash/
 sudo iptables -t nat -A PREROUTING -p tcp --dport 80 -j REDIRECT --to-port 8080
-venv/bin/gunicorn --bind localhost:8080 -w 2 webui.index:server
+venv/bin/gunicorn --bind 0.0.0.0:8080 -w 2 webui.index:server
