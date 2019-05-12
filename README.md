@@ -30,7 +30,7 @@ This Project is Broken into 2 parts:
 ### Installing
 ##### Install Requirements
 ```
-pip3 install -r requirement.txt
+pip3 install -r requirements.txt
 ```
 
 ##### To start up Clashapp
