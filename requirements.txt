@@ -7,3 +7,4 @@ dash-daq==0.1.4
 gunicorn==19.9.0
 celery==4.3.0
 timber==2.1.0
+discord.py==1.2.2
