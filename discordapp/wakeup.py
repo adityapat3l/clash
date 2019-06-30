@@ -1,6 +1,6 @@
 import discord
-import asyncio
-from discordapp.queries import format_data
+from discordapp.message_parser import read_message
+import os
 
 client = discord.Client()
 
@@ -14,9 +14,11 @@ async def on_message(msg):
     first_word = msg.content.split()[0].lower()
     channel = msg.channel
 
-    if first_word == 'pingme':
+    # print(first_word)
+
+    if first_word == 'cb!':
         # try:
-        data = format_data(msg.content, metric_name='dark', player_name='adi', player_tag='#8292J8QV8')
+        data = read_message(msg.content)
         # except Exception as e:
         #     data = 'An Error Occurred. The Minions are on it.'
         #     raise(e)
@@ -24,4 +26,17 @@ async def on_message(msg):
         await channel.send(data)
 
 
-client.run('NTkwMzI1MjMyODUwNTY3MTY4.XQgmzA.cUNwAMqPdPmwP6cWpqsne8hMZh0')
+if __name__ == '__main__':
+    # import argparse
+    # parser = argparse.ArgumentParser()
+    # # There's no data in redshift before 2010-09-01 so don't bother trying to backfill.
+    # parser.add_argument('--start-date', type=command.parse_datetime, default=datetime.datetime(2016, 1, 1))
+    # parser.add_argument('--end-date', type=command.parse_datetime, default=datetime.datetime(2019, 5, 1))
+    # parser.add_argument('--redshift-slots', type=int, default=2)
+    # parser.add_argument('--schema', type=str, default=sqlalchemy_warehouse.DEFAULT_SCHEMA)
+    # args = parser.parse_args()
+    #
+    # schema = args.schema
+
+    discord_key = os.environ["DISCORD_KEY"]
+    client.run(discord_key)
