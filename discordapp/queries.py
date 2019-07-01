@@ -3,7 +3,7 @@
 
 SQL_QUERY = """
 select 
-    concat(current_date - start_date, ' Day(s) Ago') as days_ago,
+    concat(datediff(current_date, start_date), ' Day(s) Ago') as days_ago,
     metric_value
 from m_player_stats
 where 
