@@ -1,7 +1,7 @@
-from clashapp.models import PlayerStatsCurrent, ClanStatsCurrent, PlayerStatsHistoric
-from clashapp.collector import ClanData, PlayerData
+from clashapp_old.models import PlayerStatsCurrent, ClanStatsCurrent, PlayerStatsHistoric
+from clashapp_old.collector import ClanData, PlayerData
 from sqlalchemy import exists
-from clashapp import db
+from clashapp_old import db
 from . import _commit_to_database, timber_handler
 import logging
 import traceback

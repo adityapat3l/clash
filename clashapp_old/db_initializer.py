@@ -1,6 +1,6 @@
-import clashapp.feeder as feeder
+import clashapp_old.feeder as feeder
 import config
-from clashapp import db
+from clashapp_old import db
 
 def initialize():
     db.create_all()

@@ -4,7 +4,7 @@ BASE_URL = 'https://api.clashofclans.com/v1'
 # Clan Urls
 CLAN_SEARCH_URL = BASE_URL + '/clans'
 CLAN_URL = BASE_URL + '/clans/{path}'
-
+CLAN_WAR_LEAGUE_GROUP = CLAN_URL+'/clans/{path}/currentwar/leaguegroup'
 
 # Locations
 LOCATION_LIST_URL = BASE_URL + '/locations'

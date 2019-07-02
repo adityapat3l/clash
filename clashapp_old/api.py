@@ -1,7 +1,7 @@
 import requests
 import json
 from . import API_KEY
-import clashapp.lib.urls as clashurl
+import clashapp_old.lib.urls as clashurl
 import sys
 
 try:
@@ -31,7 +31,6 @@ class ClashAPI:
             return data
         except requests.exceptions.RequestException:  # This is the correct syntax
             raise
-
 
     def get_player_info_from_tag(self, player_tag, params=None):
         self.create_url(clashurl.PLAYER_URL, path=player_tag)

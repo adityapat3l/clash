@@ -1,7 +1,7 @@
-from clashapp import db
+from clashapp_old import db
 from datetime import datetime
-from clashapp.collector import ClanData, ClashAPI
-from clashapp.models.player_model import PlayerStatsCurrent
+from clashapp_old.collector import ClanData, ClashAPI
+from clashapp_old.models.player_model import PlayerStatsCurrent
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy import func
 
@@ -40,8 +40,7 @@ class ClanStatsCurrent(db.Model):
     clan_members = db.relationship('PlayerStatsCurrent', backref=db.backref('current_clan', lazy=True))
 
     members = association_proxy('clan_members', 'player_tag',
-                                creator=_member_find_or_create,
-                                )
+                                creator=_member_find_or_create,)
 
     @classmethod
     def create_from_tag(cls, clan_tag, clan_obj=None):

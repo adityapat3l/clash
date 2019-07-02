@@ -1,7 +1,7 @@
-from clashapp import db
+from clashapp_old import db
 from datetime import datetime
-from clashapp.collector import PlayerData
-from clashapp.models import clan_model
+from clashapp_old.collector import PlayerData
+from clashapp_old.models import clan_model
 from sqlalchemy import PrimaryKeyConstraint
 from sqlalchemy.dialects.mysql import INTEGER
 
@@ -14,6 +14,7 @@ def get_or_create_clan(clan_tag):
             clan = clan_model.ClanStatsCurrent.create_from_tag(clan_tag)
 
         return clan
+
 
 class PlayerStatsCurrent(db.Model):
 
