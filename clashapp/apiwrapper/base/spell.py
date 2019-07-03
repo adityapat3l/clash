@@ -29,7 +29,7 @@ class Spell:
         self.player = player
         self.name = data.get('name')
         self.level = data.get('level')
-        self.max_level = data.get('max_level')
+        self.max_level = data.get('maxLevel')
         self.village = data.get('village')
 
     @property
