@@ -69,7 +69,7 @@ class BasicPlayer(Player):
         self.versus_trophies = data.get('versusTrophies')
         self.clan_rank = data.get('clanRank')
         self.clan_previous_rank = data.get('clanRank')
-        self.league_rank = data.get('rank')
+        self.league_rank = data.get('league').get('name')
         self.donations = data.get('donations')
         self.received = data.get('donationsReceived')
         self.attack_wins = data.get('attackWins')
