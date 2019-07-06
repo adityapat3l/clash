@@ -100,6 +100,10 @@ class FactLoader:
 
         self.player = player or PlayerBuilder(player_tag)
 
+        if not self.player.exists_in_db:
+            self.player.make_player_current_entry()
+            db.session.commit()
+
     def make_hero_fact(self):
 
         fact_data_dict = self.player.player._db_hero_load_dict()
