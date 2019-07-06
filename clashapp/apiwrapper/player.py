@@ -69,7 +69,10 @@ class BasicPlayer(Player):
         self.versus_trophies = data.get('versusTrophies')
         self.clan_rank = data.get('clanRank')
         self.clan_previous_rank = data.get('clanRank')
-        self.league_rank = data.get('league').get('name')
+        try:
+            self.league_rank = data.get('league').get('name')
+        except AttributeError:
+            self.league_rank = 'Unranked'
         self.donations = data.get('donations')
         self.received = data.get('donationsReceived')
         self.attack_wins = data.get('attackWins')
@@ -223,3 +226,114 @@ class SearchPlayer(BasicPlayer):
         """
         key_order = {k: v for v, k in enumerate(HERO_ORDER)}
         return OrderedDict(sorted(self.heroes_dict.items(), key=lambda i: key_order.get(i[0])))
+
+    def _db_achievement_load_dict(self):
+        """:class:`dict` - {name: :class:`Achievement`} A dict of achievements by name.
+        Pass in an attribute of :class:`Achievement` to get that attribute as the key
+
+        Output: {'db_attribute_value: value}
+        Example: {'town_halls_destroyed: 106}
+        """
+        db_attributes = {'Humiliator':'town_halls_destroyed',
+                         'Wall Buster': 'walls_destroyed',
+                         'Sharing is caring': 'spells_donated',
+                         'Friend in Need': 'troops_donated',
+                         'Games Champion': 'clan_game_points',
+                         'Nice and Tidy': 'obstacles_removed',
+                         'Heroic Heist': 'dark_looted',
+                         'Elixir Escapade': 'elixer_looted',
+                         'Gold Grab': 'gold_looted'}
+
+        output = {db_attributes[m.name]: m.value
+                        for m in self._achievements
+                        if m.name in db_attributes.keys()}
+
+        return output
+
+
+    def _db_hero_load_dict(self):
+        """:class:`dict` - {name: :class:`Achievement`} A dict of achievements by name.
+        Pass in an attribute of :class:`Achievement` to get that attribute as the key
+
+        Output: {'db_attribute_value: value}
+        Example: {'town_halls_destroyed: 106}
+        """
+        db_attributes = {'Barbarian King': 'barbarian_king',
+                         'Archer Queen': 'archer_queen',
+                         'Grand Warden': 'grand_warden',
+                         'Battle Machine': 'battle_machine'}
+
+        output = {db_attributes[m.name]: m.level
+                  for m in self.heroes
+                  if m.name in db_attributes.keys()}
+
+        return output
+
+    def _db_troop_load_dict(self):
+        """:class:`dict` - {name: :class:`Achievement`} A dict of achievements by name.
+        Pass in an attribute of :class:`Achievement` to get that attribute as the key
+
+        Output: {'db_attribute_value: value}
+        Example: {'town_halls_destroyed: 106}
+        """
+        db_attributes = {'Barbarian': 'barbarian',
+                         'Archer': 'archer',
+                         'Goblin': 'goblin',
+                         'Giant': 'giant',
+                         'Wall Breaker': 'wall_breaker',
+                         'Balloon': 'balloon',
+                         'Wizard': 'wizard',
+                         'Healer': 'healer',
+                         'Dragon': 'dragon',
+                         'P.E.K.K.A': 'pekka',
+                         'Minion': 'minion',
+                         'Hog Rider': 'hog_rider',
+                         'Valkyrie': 'valkyrie',
+                         'Golem': 'golem',
+                         'Witch': 'witch',
+                         'Lava Hound': 'lava_hound',
+                         'Bowler': 'bowler',
+                         'Baby Dragon': 'baby_dragon',
+                         'Miner': 'miner',
+                         'Wall Wrecker': 'wall_wrecker',
+                         'Battle Blimp': 'battle_blimp',
+                         'Ice Golem': 'ice_golem',
+                         'Electro Dragon': 'electro_dragon'}
+
+        output = {db_attributes[m.name]: m.level
+                  for m in self.troops
+                  if m.name in db_attributes.keys()}
+
+        return output
+
+
+    def _db_spell_load_dict(self):
+        """:class:`dict` - {name: :class:`Achievement`} A dict of achievements by name.
+        Pass in an attribute of :class:`Achievement` to get that attribute as the key
+
+        Output: {'db_attribute_value: value}
+        Example: {'town_halls_destroyed: 106}
+        """
+        db_attributes = {'Lightning Spell': 'lightning',
+                         'Healing Spell': 'healing',
+                         'Rage Spell': 'rage',
+                         'Jump Spell': 'jump',
+                         'Freeze Spell': 'freeze',
+                         'Poison Spell': 'poison',
+                         'Earthquake Spell': 'earthquake',
+                         'Haste Spell': 'haste',
+                         'Clone Spell': 'clone',
+                         'Skeleton Spell': 'skeleton',
+                         'Bat Spell': 'bat'}
+
+        output = {db_attributes[m.name]: m.level
+                  for m in self.spells
+                  if m.name in db_attributes.keys()}
+
+        return output
+
+
+
+
+
+

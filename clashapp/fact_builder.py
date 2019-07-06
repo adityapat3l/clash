@@ -1,13 +1,11 @@
 import datetime
-from .models import player as player_models
-from .models import clan as clan_models
+from .models.player import PlayerCurrent, FactHero, FactSpell, FactTroop, FactAchv
+from .models.clan import ClanCurrent
 from .models import db
 from .apiwrapper.api import PlayerAPI, ClanAPI
 from .apiwrapper.player import SearchPlayer
 from .apiwrapper.clan import SearchClan
 
-PlayerCurrent = player_models.PlayerCurrent
-ClanCurrent = clan_models.ClanCurrent
 
 class ClanBuilder:
     def __init__(self, clan_tag, clan=None):
@@ -28,10 +26,9 @@ class ClanBuilder:
         clan_current_entry = ClanCurrent.query.filter(ClanCurrent.clan_tag == self.clan_tag).first()
         return clan_current_entry is not None
 
-    def create_clan_current_entry(self):
+    def make_clan_current_entry(self):
 
         if self.exists_in_db:
-            print("Clan Already Exists")
             return
 
         clan_entry = ClanCurrent(clan_tag=self.clan.tag,
@@ -64,7 +61,7 @@ class PlayerBuilder:
         return player_current_entry is not None
 
     def validate(self):
-        ClanBuilder(self.player.clan.tag).create_clan_current_entry()
+        ClanBuilder(self.player.clan.tag).make_clan_current_entry()
         self.exists_in_db = self.check_if_player_exists()
 
     def get_player_from_api(self):
@@ -72,10 +69,9 @@ class PlayerBuilder:
         player_data = player_wrapper.get_player(self.player_tag)
         self.player = SearchPlayer(player_data)
 
-    def create_player_current_entry(self):
+    def make_player_current_entry(self):
 
         if self.exists_in_db:
-            print("Player Already Exists")
             return
         player_entry = PlayerCurrent(player_tag=self.player.tag,
                                      player_name=self.player.name,
@@ -101,13 +97,44 @@ class FactLoader:
     def __init__(self, player_tag, player=None):
         self.fact_time = datetime.datetime.utcnow()
         self.player_tag = player_tag
-        self.player = PlayerBuilder(self.player_tag)
 
-        self.player.create_player_current_entry()
+        self.player = player or PlayerBuilder(player_tag)
 
+    def make_hero_fact(self):
 
-    def make(self):
-        pass
+        fact_data_dict = self.player.player._db_hero_load_dict()
+        hero_entry = FactHero(player_tag=self.player_tag,
+                              fact_time=self.fact_time,
+                              **fact_data_dict)
+        db.session.add(hero_entry)
+
+    def make_spell_fact(self):
+
+        fact_data_dict = self.player.player._db_spell_load_dict()
+        spell_entry = FactSpell(player_tag=self.player_tag,
+                                fact_time=self.fact_time,
+                                **fact_data_dict)
+
+        db.session.add(spell_entry)
+
+    def make_troop_fact(self):
+
+        fact_data_dict = self.player.player._db_troop_load_dict()
+        troop_entry = FactTroop(player_tag=self.player_tag,
+                                fact_time=self.fact_time,
+                                **fact_data_dict)
+
+        db.session.add(troop_entry)
+
+    def make_achv_fact(self,):
+
+        fact_data_dict = self.player.player._db_achievement_load_dict()
+        achv_entry = FactAchv(player_tag=self.player_tag,
+                              fact_time=self.fact_time,
+                              **fact_data_dict)
+
+        db.session.add(achv_entry)
+
 
 if __name__ == '__main__':
     import argparse
