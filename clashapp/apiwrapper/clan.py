@@ -131,21 +131,3 @@ class SearchClan(BasicClan):
         This search implements the :func:`coc.utils.get` function
         """
         return get(self._members, **attrs)
-
-    # def get_detailed_members(self, cache=False, fetch=True, update_cache=True):
-    #     """Get detailed player information for every player in the clan.
-    #     This will return an AsyncIterator of :class:`SearchPlayer`.
-    #     Example
-    #     --------
-    #     .. code-block:: python3
-    #         clan = client.get_clan('tag')
-    #         async for player in clan.get_detailed_members(cache=True):
-    #             print(player.name)
-    #     :param cache: Optional[:class:`bool`] Indicates whether to search the cache before making an HTTP request
-    #     :param fetch: Optional[:class:`bool`] Indicates whether an HTTP call should be made if cache is empty.
-    #                     Defaults to ``True``. If this is ``False`` and item in cache was not found,
-    #                     ``None`` will be returned
-    #     :return: AsyncIterator of :class:`SearchPlayer`
-    #     """
-    #     tags = iter(n.tag for n in self._members)
-    #     return PlayerIterator(self._client, tags, cache, fetch, update_cache)

@@ -48,3 +48,26 @@ class ClanAPI:
         data = BaseClashAPI(url).clash_request()
 
         return data
+
+    def get_current_war(self, clan_tag):
+        url = '/clans/{}/currentwar'.format(clan_tag)
+        data = BaseClashAPI(url).clash_request()
+
+        return data
+
+    def get_current_league_war(self, clan_tag):
+        url = '/clans/{}/currentwar/leaguegroup'.format(clan_tag)
+        data = BaseClashAPI(url).clash_request()
+
+        return data
+
+
+class LeagueAPI:
+    def __init__(self, **kwargs):
+        self.requesting_user = None
+
+    def get_league_war_details(self, war_tag):
+        url = '/clanwarleagues/wars/{}'.format(war_tag)
+        data = BaseClashAPI(url).clash_request()
+
+        return data

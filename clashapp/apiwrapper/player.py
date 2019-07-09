@@ -13,12 +13,13 @@ class Player:
     name:
         :class:`str` - The clan name
     """
-    __slots__ = ('name', 'tag', '_data')
+    __slots__ = ('name', 'tag', '_data', 'town_hall')
 
     def __init__(self, data):
         self._data = data
         self.name = data['name']
         self.tag = data.get('tag')
+        self.town_hall = data.get('townHallLevel')
     #
     # def __str__(self):
     #     return self.name
@@ -70,7 +71,7 @@ class BasicPlayer(Player):
         self.clan_rank = data.get('clanRank')
         self.clan_previous_rank = data.get('clanRank')
         try:
-            self.league_rank = data.get('league').get('name')
+            self.league_rank = data.get('league', {}).get('name', 'Unranked')
         except AttributeError:
             self.league_rank = 'Unranked'
         self.donations = data.get('donations')
@@ -125,7 +126,6 @@ class SearchPlayer(BasicPlayer):
         self.clan = try_enum(Clan, data.get('clan'))
         self.best_trophies = data.get('bestTrophies')
         self.war_stars = data.get('warStars')
-        self.town_hall = data.get('townHallLevel')
         self.builder_hall = data.get('builderHallLevel')
         self.best_versus_trophies = data.get('bestVersusTrophies')
         self.versus_attacks_wins = data.get('versusBattleWins')
