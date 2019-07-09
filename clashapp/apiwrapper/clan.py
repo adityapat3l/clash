@@ -2,6 +2,7 @@ from itertools import chain
 # from .helpers.iterators import PlayerIterator
 from .helpers.utils import get
 
+
 class Clan:
     """Represents the most stripped down version of clan info.
     All other clan classes inherit this.
@@ -131,3 +132,24 @@ class SearchClan(BasicClan):
         This search implements the :func:`coc.utils.get` function
         """
         return get(self._members, **attrs)
+
+
+class LeagueClan(BasicClan):
+    """Represents a Clash of Clans League Clan
+    This class inherits both :class:`Clan` and :class:`BasicClan`,
+    and thus all attributes of these classes can be expected to be present.
+    """
+    def __init__(self, data):
+        super().__init__(data=data)
+
+    @property
+    def _members(self):
+        """|iter|
+        Returns an iterable of :class:`LeaguePlayer`: all players participating in this league season"""
+        from .player import Player  # hack because circular imports
+        return iter(Player(data=mdata) for mdata in self._data.get('members', []))
+
+    @property
+    def members(self):
+        """List[:class:`LeaguePlayer`} A list of players participating in this league season"""
+        return list(self._members)

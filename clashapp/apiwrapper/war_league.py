@@ -1,73 +1,106 @@
 from clashapp.apiwrapper.player import BasicPlayer, Player
 from .helpers.utils import try_enum
-from clashapp.apiwrapper.clan import Clan, BasicClan
-
+from clashapp.apiwrapper.clan import Clan, LeagueClan
+from clashapp.apiwrapper.api import LeagueAPI
 
 class WarLeague:
-    """Represents a Searched Player that the API returns.
-    Depending on which method calls this, some attributes may
-    be ``None``.
-    This class inherits both :class:`Player` and :class:`BasicPlayer`,
-    and thus all attributes of these classes can be expected to be present
-    Attributes
-    -----------
-    best_trophies:
-        :class:`int` - The players top trophy count
-    best_versus_trophies:
-        :class:`int` - The players top versus trophy count
-    war_stars:
-        :class:`int` - The players war star count
-    town_hall:
-        :class:`int` - The players TH level
-    builder_hall:
-        :class:`int` - The players BH level
-    versus_attacks_wins:
-        :class:`int` - The players total BH wins
     """
-    # __slots__ = ('best_trophies', 'war_stars', 'town_hall',
-    #              'builder_hall', 'best_versus_trophies', 'versus_attacks_wins')
+    Represents the Base Data for a War League
+    Data comes from /clans/{}/currentwar/leaguegroup
+    -----------
+    state:
+        :class:`str` - If the League is active or Not
+    season:
+        :class:`str` - The name of the season
+    clans:
+        :class:`list` - A list of class Clan
+    rounds:
+        :class:`list` - The list of class WarLeagueRound
+    """
+    __slots__ = ('state', 'season', 'town_hall',
+                 '_data')
 
     def __init__(self, data):
         self._data = data
         self.state = data.get('state')
         self.season = data.get('season')
-        self.rounds = data.get('rounds')  # List of Dictionary
+        # self.rounds = data.get('rounds')
 
     @property
     def _clans(self):
-        """|iter|
-        Returns an iterable of :class:`BasicClan`: A list of clans.
-        """
         return iter(Clan(mdata) for mdata in self._data.get('clans', {}))
 
     @property
     def clans(self):
-        """List[:class:`BasicClan`]: A list of clans"""
         return list(self._clans)
 
+    @property
+    def _rounds(self):
+        raw_rounds = self._data.get('rounds')
+        rounds_list = [war_round['warTags'] for war_round in raw_rounds]
+        rounds = [Round(val, idx+1) for idx, val in enumerate(rounds_list)]
+        return rounds
 
-class WarLeagueRound:
+    @property
+    def rounds(self):
+        return list(self._rounds)
 
-    # data = /clans/{}/currentwar/leaguegroup
 
-    def __init__(self, data):
+class Round:
+
+    def __init__(self, data, pos):
+        self._data = data # List of List
+        self.round_number = pos
+
+    @property
+    def battles(self):
+        battle_data = [LeagueAPI().get_league_war_details(battle) for battle in self._data]
+        return [WarLeagueBattle(data=battle_data[idx], war_tag=val) for idx, val in enumerate(self._data)]
+
+
+class WarLeagueBattle:
+    """
+     Represents the Base Data for a War League
+     Data comes from /clanwarleagues/wars/{}
+     -------
+     state:
+         :class:`str` - The players top trophy count
+     season:
+         :class:`str` - The players top versus trophy count
+     clans:
+         :class:`list` - The players war star count
+     rounds:
+         :class:`list` - The players TH level
+     """
+    def __init__(self, data, war_tag=None):
         self._data = data
+        self.tag = war_tag
         self.state = data.get('state')
-        self.team_size = data.get('teamSize')
+        self.clan_size = data.get('teamSize')
+        self.opponent_size = None  # TODO: MAKE FUNCTION FOR THIS
         self.prep_start_time = data.get('preparationStartTime')
         self.start_time = data.get('startTime')
         self.end_time = data.get('endTime')
-        self.war_start_time = data.get('warStartTime')
 
-        self.clan = Clan(data.get('clan'))
-        self.clan_stars = data.get('clan', {}).get('stars')
-        self.clan_destruction = data.get('clan', {}).get('destructionPercentage')
-        self.clan_attacks = data.get('clan', {}).get('attacks')
+        self.test = data.get('clan')
 
-        self.opponent = Clan(data.get('opponent'))
-        self.opponent_stars = data.get('opponent', {}).get('stars')
-        self.opponent_destruction = data.get('opponent', {}).get('destructionPercentage')
-        self.opponent_attacks = data.get('opponent', {}).get('attacks')
+    @property
+    def clan(self):
+        return ClanRound(self._data.get('clan'))
+
+    @property
+    def opponent(self):
+        return ClanRound(self._data.get('opponent'))
+
+        # self.clan = Clan(data.get('clan'))
+        # self.clan_stars = data.get('clan', {}).get('stars')
+        # self.clan_destruction = data.get('clan', {}).get('destructionPercentage')
+        # self.clan_attacks = data.get('clan', {}).get('attacks')
+        #
+        # self.opponent = Clan(data.get('opponent'))
+        # self.opponent_stars = data.get('opponent', {}).get('stars')
+        # self.opponent_destruction = data.get('opponent', {}).get('destructionPercentage')
+        # self.opponent_attacks = data.get('opponent', {}).get('attacks')
 
 
     @property
@@ -87,7 +120,25 @@ class WarLeagueRound:
         return list(self._opponent_member_attacks)
 
 
-class Member:
+class ClanRound(LeagueClan):
+
+    def __init__(self, data):
+        super().__init__(data=data)
+        self._data = data
+        self.stars = data.get('stars')
+        self.destruction = data.get('destructionPercentage')
+        self.total_attacks = data.get('attacks')
+
+    @property
+    def _attacks(self):
+        return iter(MemberAttack(mdata) for mdata in self._data.get('members', {}))
+
+    @property
+    def attacks(self):
+        return list(self._attacks)
+
+
+class Member(Player):
     """
     Represents a Member in a Clan War League battle.
     ------------------
@@ -99,10 +150,12 @@ class Member:
     :class: `int` - The position on the real map of the war (with 15 or 30 members)
     """
     def __init__(self, data):
+        super().__init__(data=data)
         self._data = data
         self.player = try_enum(Player, data)
         self.raw_map_position = data.get('mapPosition')
-        self.order = data.get('attacks', {}).get('order')
+        if data.get('attacks'):
+            self.order = data.get('attacks', {})[0].get('order')
 
     @property
     def map_position(self):
@@ -124,9 +177,11 @@ class MemberAttack(Member):
     """
     def __init__(self, data):
         super().__init__(data=data)
-        self.stars = data.get('attacks', {}).get('stars', 0)
-        self.destruction = data.get('attacks', {}).get('destructionPercentage', 0)
-        self.defender_tag = data.get('attacks', {}).get('defenderTag')
+
+        if data.get('attacks'):
+            self.stars = data.get('attacks', {})[0].get('stars', 0)
+            self.destruction = data.get('attacks', {})[0].get('destructionPercentage', 0)
+            self.defender_tag = data.get('attacks', {})[0].get('defenderTag')
 
     @property
     def is_3_star_attack(self):
@@ -149,9 +204,10 @@ class MemberDefense(Member):
     """
     def __init__(self, data):
         super().__init__(data=data)
-        self.stars = data.get('attacks', {}).get('stars', 0)
-        self.destruction = data.get('attacks', {}).get('destructionPercentage', 0)
-        self.defender_tag = data.get('attacks', {}).get('defenderTag')
+        self.stars = data.get('stars', 0)
+        self.destruction = data.get('destructionPercentage', 0)
+        self.defender_tag = data.get('defenderTag')
+
 
     @property
     def is_3_star_attack(self):
