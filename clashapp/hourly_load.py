@@ -4,6 +4,7 @@ import time
 
 CLAN_LIST = ['#228VGUUU0', '#YUPCJJCR']
 
+
 def initialize_clan(clan_tag):
     """
     Populates the data for the whole clan and its members
@@ -17,10 +18,10 @@ def initialize_clan(clan_tag):
     member_tags = [member.tag for member in clan_members]
 
     for tag in member_tags:
-        poulate_player_current(tag)
+        populate_player_current(tag)
 
 
-def poulate_player_current(player_tag):
+def populate_player_current(player_tag):
     """
     Populates current entry for player only
     Quick to compute
@@ -47,7 +48,7 @@ def populate_clan_facts(clan_tag):
         populate_player_facts(tag)
 
 
-def populate_player_facts(player_tag):
+def populate_player_facts(player_tag, fact_type=None):
     """
     Populates fact entry for player
     Quick to compute

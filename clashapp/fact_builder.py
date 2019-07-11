@@ -15,7 +15,7 @@ class ClanBuilder:
         if not self.clan:
             self.get_clan_from_api()
 
-        self.exists_in_db = self.check_if_clan_exists()
+        self.exists_in_db = None
 
     def get_clan_from_api(self):
         clan_wrapper = ClanAPI()
@@ -27,6 +27,7 @@ class ClanBuilder:
         return clan_current_entry is not None
 
     def make_clan_current_entry(self):
+        self.exists_in_db = self.exists_in_db or self.check_if_clan_exists()
 
         if self.exists_in_db:
             return

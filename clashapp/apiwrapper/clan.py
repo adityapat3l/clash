@@ -117,6 +117,12 @@ class SearchClan(BasicClan):
         return list(self._members)
 
     @property
+    def _cwl_members(self):
+        """List[:class:`SearchPlayer`]: A list of clan members"""
+        from .player import Player  # hack because circular imports
+        return list(iter(Player(mdata) for mdata in self._data.get('members', [])))
+
+    @property
     def member_dict(self, attr='tag'):
         """Dict: {attr: :class:`SearchPlayer`}: A dict of clan members by tag.
         Pass in an attribute of :class:`SearchPlayer` to get that attribute as the key
