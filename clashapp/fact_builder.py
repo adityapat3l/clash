@@ -40,6 +40,7 @@ class ClanBuilder:
                                  clan_type=self.clan.type,
                                  war_wins=self.clan.war_wins,
                                  war_losses=self.clan.war_losses)
+        print('Adding Clan: {}'.format(self.clan.name))
         db.session.add(clan_entry)
 
     def add_expiry(self):
@@ -62,7 +63,9 @@ class PlayerBuilder:
         return player_current_entry is not None
 
     def validate(self):
-        ClanBuilder(self.player.clan.tag).make_clan_current_entry()
+        if self.player.clan:
+            ClanBuilder(self.player.clan.tag).make_clan_current_entry()
+
         self.exists_in_db = self.check_if_player_exists()
 
     def get_player_from_api(self):
@@ -74,6 +77,12 @@ class PlayerBuilder:
 
         if self.exists_in_db:
             return
+
+        try:
+            player_clan_tag = self.player.clan.tag
+        except AttributeError:
+            # Player is no longer in clan
+            player_clan_tag = None
         player_entry = PlayerCurrent(player_tag=self.player.tag,
                                      player_name=self.player.name,
                                      player_league=self.player.league_rank,
@@ -84,7 +93,7 @@ class PlayerBuilder:
                                      received=self.player.received,
                                      war_stars=self.player.war_stars,
                                      town_hall=self.player.town_hall,
-                                     clan_tag=self.player.clan.tag)
+                                     clan_tag=player_clan_tag)
 
         db.session.add(player_entry)
 

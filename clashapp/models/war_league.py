@@ -59,16 +59,16 @@ class CwlAttacks(db.Model):
         {},
     )
 
-    player_tag = db.Column(db.String(72), unique=True, nullable=False)
-    battle_tag = db.Column(db.String(72), unique=True, nullable=False)
+    player_tag = db.Column(db.String(72), nullable=False)
+    battle_tag = db.Column(db.String(72), nullable=False)
     season = db.Column(db.String(72), nullable=False)
     town_hall = db.Column(db.Integer)
 
-    player_pos = db.Column(db.String(72), unique=True, nullable=False)
+    player_pos = db.Column(db.String(72), nullable=False)
     stars = db.Column(db.Integer, default=0)
     destruction = db.Column(db.Integer, default=0)
 
-    defender_tag = db.Column(db.String(72), unique=True)
+    defender_tag = db.Column(db.String(72))
     defender_pos = db.Column(db.Integer)
     defender_town_hall = db.Column(db.Integer)
 
@@ -87,12 +87,12 @@ class CwlRounds(db.Model):
     season = db.Column(db.String(72), nullable=False)
     round_number = db.Column(db.Integer)
 
-    clan_tag = db.Column(db.Integer, db.ForeignKey("cwl_clan_current.clan_tag"))
+    clan_tag = db.Column(db.String(72), db.ForeignKey("cwl_clan_current.clan_tag"))
     clan_stars = db.Column(db.Integer, default=0)
     clan_destruction = db.Column(db.Integer, default=0)
     clan_attacks = db.Column(db.Integer, default=0)
 
-    opponent_clan_tag = db.Column(db.Integer, db.ForeignKey("cwl_clan_current.clan_tag"))
+    opponent_clan_tag = db.Column(db.String(72), db.ForeignKey("cwl_clan_current.clan_tag"))
     opponent_stars = db.Column(db.Integer, default=0)
     opponent_destruction = db.Column(db.Integer, default=0)
     opponent_attacks = db.Column(db.Integer, default=0)

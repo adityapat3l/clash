@@ -6,6 +6,9 @@ from .apiwrapper.player import SearchPlayer
 from .apiwrapper.war_league import WarLeague
 from .models.war_league import CwlRounds, CwlAttacks, CwlClanCurrent, CwlPlayerCurrent
 from .fact_builder import ClanBuilder
+from .hourly_load import populate_player_facts
+from sqlalchemy import text
+
 
 class LeagueBuilder:
 
@@ -14,21 +17,22 @@ class LeagueBuilder:
         self.league = WarLeague(self._league_data)
 
     @classmethod
-    def from_clan_tag(cls, clan_tag):
+    def create_from_clan_tag(cls, clan_tag):
         league_data = ClanAPI().get_current_league_war(clan_tag)
         return cls(league_data)
 
-    def initialize_current_tables(self):
+    def create_cwl_current_records(self):
+        db.engine.execute("SET FOREIGN_KEY_CHECKS = 0;")
         for clan in self.league.clans:
+            print("CLAN NAME: {}".format(clan.name))
             exists = CwlClanCurrent.query.filter(CwlClanCurrent.clan_tag == clan.tag).scalar() is not None
 
             if not exists:
                 clan_entry = CwlClanCurrent(clan_tag=clan.tag,
                                             clan_name=clan.name,
                                             season=self.league.season,
-                                       )
+                                            )
                 db.session.add(clan_entry)
-                db.session.commit()
 
                 for member in clan._cwl_members:
                     member_entry = CwlPlayerCurrent(player_tag=member.tag,
@@ -38,11 +42,40 @@ class LeagueBuilder:
                                                     town_hall=member.town_hall)
 
                     db.session.add(member_entry)
+                    populate_player_facts(member.tag)
 
-    def populate_cwl_rounds(self):
-        for league_rounds in self.league.rounds:
-            print("----- ROUND {} -----".format(league_rounds.round_number))
-            for battle in league_rounds.battles:
+
+    def populate_battle(self, battle):
+        clan = battle.clan
+        opponent = battle.opponent
+
+        def add_attack(attack, season):
+            if attack.exists:
+                cwl_attack = CwlAttacks(player_tag=attack.player.tag,
+                                        battle_tag=battle.tag,
+                                        season=season,
+                                        town_hall=attack.player.town_hall,
+                                        player_pos=attack.map_position,
+                                        stars=attack.stars,
+                                        destruction=attack.destruction,
+                                        defender_tag=attack.defender_tag
+                                        )
+
+                db.session.add(cwl_attack)
+
+        for attack in clan.attacks:
+            add_attack(attack, season=self.league.season)
+        for attack in opponent.attacks:
+            add_attack(attack, season=self.league.season)
+
+
+
+    def populate_rounds(self):
+        db.engine.execute("SET FOREIGN_KEY_CHECKS = 0;")
+        for league_round in self.league.rounds:
+            print("----- ROUND {} -----".format(league_round.round_number))
+            for battle in league_round.battles:
+
                 clan_round = battle.clan
                 opponent_round = battle.opponent
 
@@ -57,37 +90,25 @@ class LeagueBuilder:
                 opponent_clan_tag = opponent_round.tag
                 opponent_stars = opponent_round.stars
                 opponent_destruction = opponent_round.destruction
-                opponent_clan = opponent_round.total_attacks
+                opponent_attacks = opponent_round.total_attacks
 
-                def insert_player_attacks(clan_attacks_list, opponent_attacks_list):
-                    for attack in clan_attacks_list:
-                        if attack.exists:
-                            print(attack.stars, attack.destruction, attack.attacker_tag,
-                                  attack.defender_tag, attack.raw_map_position)
+                exists = CwlRounds.query.filter_by(clan_tag=clan_tag,
+                                           opponent_clan_tag=opponent_clan_tag).scalar() is not None
 
-
-                print(battle_tag, season, clan_tag, clan_stars, round(clan_destruction,2), clan_attacks)
-                insert_player_attacks(clan_round.attacks, opponent_round.attacks)
-
-                # Update Clan Current
-                # Update Player Current
-                # Insert Player Attacks
-
-
-                # battle_tag = db.Column(db.String(72), unique=True, nullable=False)
-                # season = db.Column(db.String(72), nullable=False)
-                # round_number = db.Column(db.Integer)
-                #
-                # clan_tag = db.Column(db.Integer, db.ForeignKey("cwl_clan_current.clan_tag"))
-                # clan_stars = db.Column(db.Integer, default=0)
-                # clan_destruction = db.Column(db.Integer, default=0)
-                #
-                # opponent_clan_tag = db.Column(db.Integer, db.ForeignKey("cwl_clan_current.clan_tag"))
-                # opponent_stars = db.Column(db.Integer, default=0)
-                # opponent_destruction = db.Column(db.Integer, default=0)
-                #
-                # created_time = db.Column(db.DateTime, default=datetime.utcnow)
-                # updated_time = db.Column(db.DateTime, default=datetime.utcnow)
+                if not exists:
+                    round_entry = CwlRounds(battle_tag=battle_tag,
+                                            round_number=league_round.round_number,
+                                            season=season,
+                                            clan_tag=clan_tag,
+                                            clan_stars=clan_stars,
+                                            clan_attacks=clan_attacks,
+                                            clan_destruction=clan_destruction,
+                                            opponent_clan_tag=opponent_clan_tag,
+                                            opponent_stars=opponent_stars,
+                                            opponent_destruction=opponent_destruction,
+                                            opponent_attacks=opponent_attacks)
+                    db.session.add(round_entry)
+                    self.populate_battle(battle)
 
 
 

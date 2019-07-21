@@ -139,14 +139,14 @@ class ClanRound(LeagueClan):
     """
     def __init__(self, data):
         super().__init__(data=data)
-        self._data = data
+        self._round_data = data
         self.stars = data.get('stars')
         self.destruction = data.get('destructionPercentage')  # This is faulty. The API calculates this incorrectly.
         self.total_attacks = data.get('attacks')
 
     @property
     def _attacks(self):
-        return iter(MemberAttack(mdata) for mdata in self._data.get('members', {}))
+        return iter(MemberAttack(mdata) for mdata in self._round_data.get('members', {}))
 
     @property
     def attacks(self):
@@ -155,7 +155,7 @@ class ClanRound(LeagueClan):
 
 
 
-class Member(Player):
+class WarLeagueMember(Player):
     """
     Represents a Member in a Clan War League battle.
     ------------------
@@ -170,16 +170,11 @@ class Member(Player):
         super().__init__(data=data)
         self._data = data
         self.player = try_enum(Player, data)
-        self.raw_map_position = data.get('mapPosition')
+        self.map_position = data.get('mapPosition')
         if data.get('attacks'):
             self.order = data.get('attacks', {})[0].get('order')
 
-    @property
-    def map_position(self):
-        return
-
-
-class MemberAttack(Member):
+class MemberAttack(WarLeagueMember):
     """
     Represents a Member Attack that is returned by the War League Data
     Depending on which method calls this, some attributes may
@@ -197,6 +192,7 @@ class MemberAttack(Member):
     def __init__(self, data):
         super().__init__(data=data)
 
+        self._data = data
         self._attacks = data.get('attacks')
 
         self.exists = self._attacks is not None
@@ -213,7 +209,7 @@ class MemberAttack(Member):
 
     @property
     def attacker(self):
-        return  #  Class of Player
+        return iter((mdata) for mdata in self._data.get('members', {}))
 
     @property
     def defender(self):
@@ -221,7 +217,7 @@ class MemberAttack(Member):
 
 
 # TODO: Parse the API to find the defense of the war. This is fake vars right now
-class MemberDefense(Member):
+class MemberDefense(WarLeagueMember):
     """
     Represents a Member Attack that is returned by the War League Data
     Depending on which method calls this, some attributes may

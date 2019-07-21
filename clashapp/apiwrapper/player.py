@@ -19,7 +19,7 @@ class Player:
         self._data = data
         self.name = data['name']
         self.tag = data.get('tag')
-        self.town_hall = data.get('townHallLevel')
+        self.town_hall = data.get('townHallLevel') or data.get('townhallLevel')  # Cause supercell sucks
     #
     # def __str__(self):
     #     return self.name
